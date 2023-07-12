@@ -1,6 +1,6 @@
 import type {IrEntry} from "~/models/irMaps.server";
-import type {TreeMapNodeCategory} from "~/components/treemap/processData";
-import {buildHierarchy, removeAllSmall, TreeMapNode} from "~/components/treemap/processData";
+import type {TreeMapNodeCategory, TreeMapNode} from "~/components/treemap/processData";
+import {buildHierarchy, removeAllSmall} from "~/components/treemap/processData";
 import {useEffect, useRef, useState} from "react";
 import * as d3 from "d3";
 import {TreeMapRenderer} from "~/components/treemap/rendering";

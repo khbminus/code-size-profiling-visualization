@@ -15,13 +15,6 @@ export async function getIrMap(...mapPath: string[]): Promise<IrMap> {
     return fs
         .readFile(filePath, 'utf-8')
         .then(content => JSON.parse(content))
-        .then(x => {
-            console.log(x);
-            return x;
-        })
-        .catch(x => {
-            console.log(x);
-        })
 }
 
 export const getShallowIrMapLeft = async () => getIrMap("ir-sizes-left.json");

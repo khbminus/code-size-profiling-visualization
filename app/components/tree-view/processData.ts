@@ -14,9 +14,9 @@ export type Node = {
 }
 
 export function processNames(names: string[]): Node[] {
-    const splitNames: [string, string[]][] = names.map(x => [x, splitByDot(x)]);
+    const splitNames: [string, string[]][] = names.map(splitByDot);
     let root: LookupNode = {label: "", value: "", children: new Map()}
-    splitNames.forEach(([name, split]) => {
+    splitNames.forEach(split => {
             let currentVertex = root;
             let depth = 0;
             let value = "";
