@@ -11,17 +11,13 @@ export class TreeMapRenderer {
     private static collectName = (d: D3Node) =>
         d.ancestors().reverse().map(d => d.data.name).join("/");
 
-    private currentNode: D3Node;
     private group: d3.Selection<SVGGElement, any, any, any>;
     private readonly x: d3.ScaleLinear<number, number>
     private readonly y: d3.ScaleLinear<number, number>
+    private path: string[]
 
-    constructor(data: d3.HierarchyNode<TreeMapNode>,
-                private svg: d3.Selection<SVGGElement, any, any, any>, private width: number, private height: number) {
-        const treemap = d3
-            .treemap<TreeMapNode>()
-            .tile(this.tilingFunction.bind(this));
-        this.currentNode = treemap(data);
+    constructor(private svg: d3.Selection<SVGGElement, any, any, any>, private width: number, private height: number,
+                private newPathCallback: (path: string[]) => void, path: string[]) {
         this.group = svg
             .append("g")
         this.x = d3
@@ -30,15 +26,15 @@ export class TreeMapRenderer {
         this.y = d3
                 .scaleLinear()
                 .rangeRound([0, this.height]);
+        this.path = path.slice()
 
     }
 
-    public renderTreeMap() {
-        this.render(this.group, this.currentNode);
+    public renderTreeMap(node: D3Node) {
+        this.render(this.group, node);
     }
 
     private render(group: d3.Selection<SVGGElement, any, any, any>, root: D3Node) {
-        this.currentNode = root;
         if (root.children === undefined) {
             return;
         }
@@ -126,20 +122,6 @@ export class TreeMapRenderer {
             .attr("width", d => d === root ? this.width : this.x(d.x1) - this.x(d.x0))
             .attr("height", d => d === root ? 30 : this.y(d.y1) - this.y(d.y0));
     }
-
-
-    private tilingFunction(node: d3.HierarchyRectangularNode<any>, x0: number, y0: number, x1: number, y1: number) {
-        d3.treemapBinary(node, 0, 0, this.width, this.height);
-        if (node.children === undefined) {
-            return;
-        }
-        for (const child of node.children) {
-            child.x0 = x0 + child.x0 / this.width * (x1 - x0);
-            child.x1 = x0 + child.x1 / this.width * (x1 - x0);
-            child.y0 = y0 + child.y0 / this.height * (y1 - y0);
-            child.y1 = y0 + child.y1 / this.height * (y1 - y0);
-        }
-    }
     private idMap: Map<TreeMapNode, number> = new Map();
     private getId(node: TreeMapNode): number {
         const value = this.idMap.get(node);
@@ -155,6 +137,10 @@ export class TreeMapRenderer {
     private zoomIn(d: D3Node) {
         const group0 = this.group.attr("pointer-events", "none");
         const group1 = this.group = this.svg.append("g").call(this.render.bind(this), d);
+        const nextPath = this.path.slice();
+        nextPath.push(d.data.name);
+        // this.newPathCallback(nextPath);
+        this.path = nextPath;
 
         this.x.domain([d.x0, d.x1]);
         this.y.domain([d.y0, d.y1]);
@@ -178,13 +164,17 @@ export class TreeMapRenderer {
                     ?.call(this.position.bind(this), d));
     }
 
-// When zooming out, draw the old nodes on top, and fade them out.
     private zoomOut(d: D3Node) {
         if (d.parent === null) {
             return;
         }
         const group0 = this.group.attr("pointer-events", "none");
         const group1 = this.group = this.svg.insert("g", "*").call(this.render.bind(this), d.parent);
+
+        const nextPath = this.path.slice();
+        nextPath.pop();
+        // this.newPathCallback(nextPath);
+        this.path = nextPath;
 
         this.x.domain([d.parent.x0, d.parent.x1]);
         this.y.domain([d.parent.y0, d.parent.y1]);
@@ -209,6 +199,4 @@ export class TreeMapRenderer {
                 )
             );
     }
-
-
 }
