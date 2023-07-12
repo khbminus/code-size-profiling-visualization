@@ -1,6 +1,5 @@
 import {promises as fs} from "fs";
-import * as path from "path";
-import * as process from "process";
+import {getFilePath} from "~/models/utils";
 
 export type IrEntry = {
     size: number,
@@ -11,8 +10,8 @@ export type IrMap = {
     [key: string]: IrEntry
 }
 
-async function getIrMap(...mapPath: string[]): Promise<IrMap> {
-    const filePath = path.join(process.cwd(), "profile-data", ...mapPath);
+export async function getIrMap(...mapPath: string[]): Promise<IrMap> {
+    const filePath = getFilePath(...mapPath);
     return fs
         .readFile(filePath, 'utf-8')
         .then(content => JSON.parse(content))
