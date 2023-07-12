@@ -1,0 +1,19 @@
+.react-checkbox-tree ol {
+    width: 100%;
+}
+
+.rct-text {
+    text-overflow: ellipsis;
+}
+
+.react-checkbox-tree label,
+.rct-bare-label {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.rct-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
