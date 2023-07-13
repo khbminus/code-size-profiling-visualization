@@ -18,6 +18,7 @@ module.exports = {
         /d3(-[a-zA-Z\-\d]+)?/,
         "delaunator",
         "internmap",
-        "robust-predicates"
+        "robust-predicates",
+        /@react-sigma\/*/
     ]
 };
