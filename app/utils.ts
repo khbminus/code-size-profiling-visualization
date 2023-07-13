@@ -1,3 +1,5 @@
+import {useEffect, useState} from "react";
+
 export function splitByDot(x: string): string[] {
     const complement = {")": "(", "]": "[", ">": "<", "}": "{"};
     const chars = [...x]
@@ -28,4 +30,24 @@ export function splitByDot(x: string): string[] {
         res.push(current);
     }
     return res;
+}
+
+export function useDebounce<T>(value: T, delay: number): T {
+    // State and setters for debounced value
+    const [debouncedValue, setDebouncedValue] = useState<T>(value);
+
+    useEffect(
+        () => {
+            const handler = setTimeout(() => {
+                if (value !== debouncedValue) setDebouncedValue(value);
+            }, delay);
+
+            return () => {
+                clearTimeout(handler);
+            };
+        },
+        [value, delay],
+    );
+
+    return debouncedValue;
 }

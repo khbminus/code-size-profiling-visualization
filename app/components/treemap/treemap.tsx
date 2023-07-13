@@ -1,7 +1,7 @@
 import type {IrEntry} from "~/models/irMaps.server";
 import type {TreeMapNodeCategory, TreeMapNode} from "~/components/treemap/processData";
 import {buildHierarchy, removeAllSmall} from "~/components/treemap/processData";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import * as d3 from "d3";
 import {TreeMapRenderer} from "~/components/treemap/rendering";
 import invariant from "tiny-invariant";
@@ -34,7 +34,7 @@ export default function TreeMap(props: TreeMapProps) {
     } = props;
 
     const svgRef = useRef(null);
-    const tilingFunction = (node: d3.HierarchyRectangularNode<any>, x0: number, y0: number, x1: number, y1: number) => {
+    const tilingFunction = useMemo(() => ((node: d3.HierarchyRectangularNode<any>, x0: number, y0: number, x1: number, y1: number) => {
         d3.treemapBinary(node, 0, 0, width, height);
         if (node.children === undefined) {
             return;
@@ -45,23 +45,25 @@ export default function TreeMap(props: TreeMapProps) {
             child.y0 = y0 + child.y0 / height * (y1 - y0);
             child.y1 = y0 + child.y1 / height * (y1 - y0);
         }
-    }
-    const treemap = d3
+    }), [width, height]);
+    const treemap = useMemo(() => d3
         .treemap<TreeMapNode>()
-        .tile(tilingFunction);
-    const tree = removeAllSmall(
+        .tile(tilingFunction), [tilingFunction]);
+    const tree = useMemo(() =>
         buildHierarchy(renderableNames, "Kotlin IR", 0, topCategory, primaryIrMap, secondaryIrMap),
-        minimumRadius
-    );
-    invariant(typeof tree !== "number", "Couldn't find suitable tree");
+        [renderableNames, topCategory, primaryIrMap, secondaryIrMap]);
 
-    const hierarchy = d3
+    const hierarchy = useMemo(() => removeAllSmall(
+        d3
         .hierarchy(tree)
-        .sum(d => d.value);
+        .sum(d => d.value), minimumRadius), [minimumRadius,tree]);
+    invariant(hierarchy, "hierarchy is empty");
+    const builtTreeMap = useMemo(
+        () => treemap(hierarchy),
+        [treemap, hierarchy]
+    );
 
-    const builtTreeMap = treemap(hierarchy);
-
-    const [currentPath, setPath] = useState(["Kotlin IR"]);
+    const [currentPath, setPath] = useState<string[]>([]);
 
     useEffect(() => {
         const svg = d3
@@ -79,10 +81,13 @@ export default function TreeMap(props: TreeMapProps) {
             invariant(b.value !== undefined, `${b.data.name}.value is undefined`);
             invariant(a.value !== undefined, `${a.data.name}.value is undefined`);
             return b.value - a.value;
-        })
+        });
 
         const renderer = new TreeMapRenderer(svgTreeGroup, width, height, setPath, currentPath);
         const restorePath = (depth: number, node: d3.HierarchyRectangularNode<TreeMapNode>): d3.HierarchyRectangularNode<TreeMapNode> => {
+            if (depth == currentPath.length) {
+                return node;
+            }
             invariant(node.children, `${node.data.name}.children is undefined`);
             for (const child of node.children) {
                 if (child.data.name == currentPath[depth]) {
@@ -91,9 +96,11 @@ export default function TreeMap(props: TreeMapProps) {
             }
             return node;
         }
+        console.log(currentPath);
         console.log(restorePath(0, builtTreeMap));
+        console.log(restorePath(0, builtTreeMap).parent);
         renderer.renderTreeMap(restorePath(0, builtTreeMap));
 
-    }, [currentPath, builtTreeMap, tree, renderableNames, minimumRadius, height, width, primaryIrMap, secondaryIrMap, topCategory, hierarchy.children]);
+    }, [builtTreeMap,height, width]);
     return <svg ref={svgRef}/>
 }

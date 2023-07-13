@@ -1,5 +1,7 @@
 import type {IrEntry} from "~/models/irMaps.server";
 import {splitByDot} from "~/utils";
+import invariant from "tiny-invariant";
+import * as d3 from "d3";
 
 export enum TreeMapNodeCategory {
     /** The leaf node that holds retained and shallow sizes*/
@@ -36,7 +38,20 @@ export function buildHierarchy(
             }
             return [leafs, nonLeafs];
         }, [[], []] as [[string[], string][], [string[], string][]]);
-    const children: TreeMapNode[] = leafsNames
+
+    const nextChildren = new Map<string, string[]>();
+    nonLeafsNames.forEach(([split, name]) => {
+        const firstElementArray = nextChildren.has(split[depth]) ? nextChildren.get(split[depth]) : [];
+        if (firstElementArray === undefined) {
+            throw new Error(`nextChildren has ${split[depth]}, but lookup is undefined`);
+        }
+        firstElementArray.push(name);
+        nextChildren.set(split[depth], firstElementArray);
+    });
+
+    const additionalValue = new Map<string, { value: number, shallowValue: number }>();
+
+    let children: TreeMapNode[] = leafsNames
         .map(([split, name]): TreeMapNode => {
             const visualName = split[split.length - 1];
             const value = primaryValues.get(name) || {size: 0, type: "unknown"};
@@ -58,25 +73,28 @@ export function buildHierarchy(
                 children: []
             };
         });
-
-    const nextChildren = new Map<string, string[]>();
-    nonLeafsNames.forEach(([split, name]) => {
-        const firstElementArray = nextChildren.has(split[depth]) ? nextChildren.get(split[depth]) : [];
-        if (firstElementArray === undefined) {
-            throw new Error(`nextChildren has ${split[depth]}, but lookup is undefined`);
+    children.forEach(node => {
+        if (!nextChildren.has(node.name)) {
+            return;
         }
-        firstElementArray.push(name);
-        nextChildren.set(split[depth], firstElementArray);
+        const old = additionalValue.get(node.name) || {value: 0, shallowValue: 0};
+        additionalValue.set(node.name, {value: old.value + node.value, shallowValue: old.shallowValue + (node.shallowValue || 0)});
     });
+    children = children.filter(x => !additionalValue.has(x.name));
+
     nextChildren.forEach((nextNames, name) => {
-        children.push(buildHierarchy(
+        const node = buildHierarchy(
             nextNames,
             name,
             depth + 1,
             topCategory,
             primaryValues,
             secondaryValues
-        ));
+        );
+        const additional = additionalValue.get(node.name) || {value: 0, shallowValue: 0};
+        node.value += additional.value;
+        node.shallowValue = (node.shallowValue || 0) + (additional.shallowValue || 0);
+        children.push(node);
     });
     return {
         name: rootName,
@@ -89,27 +107,19 @@ export function buildHierarchy(
     }
 }
 
-export function removeAllSmall(node: TreeMapNode, radius: number): TreeMapNode | number {
-    if (node.children.length === 0) {
-        return node.value >= radius ? node : node.value;
+export function removeAllSmall(node: d3.HierarchyNode<TreeMapNode>, radius: number): d3.HierarchyNode<TreeMapNode> | null {
+    console.log(node);
+    if (node.children === undefined) {
+        invariant(node.value !== undefined, `node.value is undefined for ${node.data.name}`);
+        return node.value >= radius ? node : null;
     }
-    const [additionalValues, leafs] = node
+    node.children = node
         .children
         .map(child => removeAllSmall(child, radius))
-        .reduce(([add, lf], child) => {
-            if (typeof child === "number") {
-                add.push(child);
-            } else {
-                lf.push(child);
-            }
-            return [add, lf];
-        }, [[], []] as [number[], TreeMapNode[]]);
-    return {
-        name: node.name,
-        shallowValue: node.shallowValue,
-        children: leafs,
-        category: node.category,
-        value: node.value + additionalValues.reduce((a, b) => a + b, 0)
-    };
+        .filter((x): x is d3.HierarchyNode<TreeMapNode>=> x !== null);
+    if (node.children.length === 0) {
+        node.children = undefined;
+    }
+    return node;
 }
 

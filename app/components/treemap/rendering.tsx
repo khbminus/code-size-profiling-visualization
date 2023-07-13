@@ -31,6 +31,8 @@ export class TreeMapRenderer {
     }
 
     public renderTreeMap(node: D3Node) {
+        this.x.domain([node.x0, node.x1]);
+        this.y.domain([node.y0, node.y1]);
         this.render(this.group, node);
     }
 
@@ -139,7 +141,7 @@ export class TreeMapRenderer {
         const group1 = this.group = this.svg.append("g").call(this.render.bind(this), d);
         const nextPath = this.path.slice();
         nextPath.push(d.data.name);
-        // this.newPathCallback(nextPath);
+        this.newPathCallback(nextPath);
         this.path = nextPath;
 
         this.x.domain([d.x0, d.x1]);
@@ -173,7 +175,7 @@ export class TreeMapRenderer {
 
         const nextPath = this.path.slice();
         nextPath.pop();
-        // this.newPathCallback(nextPath);
+        this.newPathCallback(nextPath);
         this.path = nextPath;
 
         this.x.domain([d.parent.x0, d.parent.x1]);

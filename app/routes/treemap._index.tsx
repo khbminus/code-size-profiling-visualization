@@ -34,7 +34,6 @@ export default function TreeMapPage() {
     const irMapPrimary = new Map(Object.entries(retainedMap));
 
     const [checked, setChecked] = useState([...irMapSecondary.keys()]);
-    const [expanded, setExpanded] = useState<string[]>([]);
 
     const treeViewNodes = processNames([...irMapSecondary.keys()]);
 
@@ -58,9 +57,7 @@ export default function TreeMapPage() {
                 </div>
                 <TreeView
                     checked={checked}
-                    expanded={expanded}
                     setCheck={setChecked}
-                    setExpanded={setExpanded}
                     nodes={treeViewNodes}
                 ></TreeView>
             </div>}
