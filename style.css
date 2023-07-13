@@ -17,3 +17,18 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.react-checkbox-tree {
+    right: 0;
+    top: 0;
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 95vh;
+    width: 20%;
+}
+
+.react-sigma {
+    float: left;
+    position: absolute;
+    left: 0;
+}

@@ -8,7 +8,7 @@ import {ClientOnly} from "remix-utils";
 import Skeleton from "react-loading-skeleton";
 import TreeView from "~/components/tree-view/TreeView";
 
-import  "react-checkbox-tree/lib/react-checkbox-tree.css"
+import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import "style.css"
 import {useState} from "react";
 import {processNames} from "~/components/tree-view/processData";
@@ -56,22 +56,13 @@ export default function TreeMapPage() {
                         height={window.innerHeight * 0.97}
                     ></TreeMap>
                 </div>
-                <div style={{
-                    right: 0,
-                    position: "absolute",
-                    overflowX: "hidden",
-                    overflowY: "auto",
-                    height: "95vh",
-                    width: "20%"
-                }}>
-                    <TreeView
-                        checked={checked}
-                        expanded={expanded}
-                        setCheck={setChecked}
-                        setExpanded={setExpanded}
-                        nodes={treeViewNodes}
-                    ></TreeView>
-                </div>
+                <TreeView
+                    checked={checked}
+                    expanded={expanded}
+                    setCheck={setChecked}
+                    setExpanded={setExpanded}
+                    nodes={treeViewNodes}
+                ></TreeView>
             </div>}
     </ClientOnly>
 }
