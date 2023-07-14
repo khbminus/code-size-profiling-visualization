@@ -9,6 +9,7 @@ import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import TreeView from "~/components/tree-view/TreeView";
 import Graph from "~/components/graph/Graph";
 import "style.css"
+
 export const loader = async () => {
     const {nodes, edges} = await getRegularGraphLeft();
     return json({nodes: [...nodes.entries()], edges: edges});
@@ -32,13 +33,19 @@ export default function GraphPage() {
         <div id="content">
             <Graph nodes={nodes} edges={edges} renderNames={checked} maxDepth={maxDepth}/>
             <div className="treemap-side-bar">
-                <input
-                    type="range"
-                    min={"1"}
-                    max={"20"}
-                    value={maxDepth}
-                    onChange={e => setMaxDepth(e.target.valueAsNumber)}
-                />
+                <div className="depth-select-wrapper">
+                    <label htmlFor="depth-select">Select maximum depth: </label>
+                    <input
+                        className="depth-select"
+                        type="range"
+                        min="1"
+                        max="20"
+                        value={maxDepth}
+                        onChange={e => setMaxDepth(e.target.valueAsNumber)}
+                        name="depth-select"
+                    />
+                    <span className="depth-select-value">{maxDepth}</span>
+                </div>
                 <TreeView checked={checked} setCheck={setChecked}
                           nodes={treeViewNodes}/>
             </div>
