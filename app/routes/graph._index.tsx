@@ -1,4 +1,4 @@
-import type { LinksFunction} from "@remix-run/node";
+import type {LinksFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {getRegularGraphLeft} from "~/models/graph.server";
 import {useLoaderData} from "@remix-run/react";
@@ -8,7 +8,7 @@ import {processNames} from "~/components/tree-view/processData";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import TreeView from "~/components/tree-view/TreeView";
 import Graph from "~/components/graph/Graph";
-
+import "style.css"
 export const loader = async () => {
     const {nodes, edges} = await getRegularGraphLeft();
     return json({nodes: [...nodes.entries()], edges: edges});
@@ -17,9 +17,6 @@ export const loader = async () => {
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
     href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-}, {
-    rel: "stylesheet",
-    href: "/style.css"
 }
 ];
 
@@ -35,8 +32,8 @@ export default function GraphPage() {
         <div id="content">
             <Graph nodes={nodes} edges={edges} renderNames={checked}/>
             <div className="treemap-side-bar">
-            <TreeView checked={checked}  setCheck={setChecked}
-                      nodes={treeViewNodes}/>
+                <TreeView checked={checked} setCheck={setChecked}
+                          nodes={treeViewNodes}/>
             </div>
         </div>
     )

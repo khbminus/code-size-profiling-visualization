@@ -1,4 +1,4 @@
-import {PlainObject} from "sigma/types";
+import type {PlainObject} from "sigma/types";
 
 export function drawHover(context: CanvasRenderingContext2D, data: PlainObject, settings: PlainObject) {
     const size = settings.labelSize;

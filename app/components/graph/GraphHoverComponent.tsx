@@ -40,6 +40,6 @@ export function GraphHoverComponent({hoveredNode}: { hoveredNode: string | null 
                         : {...data, color: EDGE_FADE_COLOR, hidden: true}
                 : null,
         );
-    }, [debouncedHoveredNode]);
+    }, [sigma, debouncedHoveredNode]);
     return <></>;
 }

@@ -1,4 +1,4 @@
-import {getShallowIrMapLeft, getRetainedIrMapLeft} from "~/models/irMaps.server";
+import {getRetainedIrMapLeft, getShallowIrMapLeft} from "~/models/irMaps.server";
 import type {LinksFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
@@ -12,7 +12,7 @@ import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css"
 import {useMemo, useState} from "react";
 import {processNames} from "~/components/tree-view/processData";
-import {max} from "d3";
+import MinimumSizeChooser from "~/components/treemap/MinimumSizeChooser";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -41,43 +41,45 @@ export default function TreeMapPage() {
     const [minSize, maxSize] = useMemo(
         () => [...irMapPrimary.values()].reduce(([mn, mx], {size}) =>
             [Math.min(mn, size), Math.max(mx, size)], [Infinity, -Infinity] as [number, number]), [irMapPrimary]);
-    console.log(minSize, maxSize);
     const [minimumRadius, setRadius] = useState(0);
-    const topCategory = TreeMapNodeCategory.RETAINED;
+    const [viewMode, setViewMode] = useState("middle");
 
     return <ClientOnly fallback={<Skeleton/>}>
         {() =>
             <div id={"content"} style={{overflow: "hidden"}}>
                 <div style={{float: "left"}}>
                     <TreeMap
-                        primaryIrMap={irMapPrimary}
-                        secondaryIrMap={irMapSecondary}
+                        primaryIrMap={viewMode === "shallow" ? irMapSecondary : irMapPrimary}
+                        secondaryIrMap={viewMode === "middle" ? irMapSecondary : null}
                         minimumRadius={minimumRadius}
                         renderableNames={checked}
-                        topCategory={topCategory}
-                        width={window.innerWidth * 0.8}
+                        topCategory={viewMode === "shallow" ? TreeMapNodeCategory.SHALLOW : TreeMapNodeCategory.RETAINED}
+                        width={window.innerWidth * 0.75}
                         height={window.innerHeight * 0.97}
                     ></TreeMap>
                 </div>
                 <div className="treemap-side-bar">
-                    <div className="minimum-size-chooser">
-                        <label htmlFor="minimumSize" className="size-label">Minimum retained size to display:
-                        </label>
-                        <input type="range"
-                               id="minimumSize"
-                               name="minimumSize"
-                               value={minimumRadius}
-                               onChange={e => setRadius(e.target.valueAsNumber)}
-                               min={minSize}
-                               max={maxSize}
-                        />
-                        <span className="minimum-size-viewer">{minimumRadius}</span>
-                    </div>
+                    <MinimumSizeChooser
+                        minimumRadius={minimumRadius}
+                        setRadius={setRadius}
+                        minSize={minSize}
+                        maxSize={maxSize}
+                        viewMode={viewMode}
+                    />
+                    <select
+                        name="viewMode"
+                        value={viewMode}
+                        onChange={e => setViewMode(e.target.value)}
+                    >
+                        <option value="middle">Show shallow and retained size</option>
+                        <option value="shallow">Show only shallow size</option>
+                        <option value="retained">Show only retained size</option>
+                    </select>
                     <TreeView
                         checked={checked}
                         setCheck={setChecked}
                         nodes={treeViewNodes}
-                    ></TreeView>
+                    />
                 </div>
             </div>}
     </ClientOnly>

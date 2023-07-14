@@ -12,6 +12,6 @@ export default function GraphEventController({setHovered}: { setHovered: (newHov
                 setHovered(null);
             }
         })
-    }, [registerEvents]);
+    }, [setHovered, registerEvents]);
     return <></>;
 }

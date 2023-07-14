@@ -1,7 +1,7 @@
 import type {IrEntry} from "~/models/irMaps.server";
 import {splitByDot} from "~/utils";
 import invariant from "tiny-invariant";
-import * as d3 from "d3";
+import type * as d3 from "d3";
 
 export enum TreeMapNodeCategory {
     /** The leaf node that holds retained and shallow sizes*/
@@ -92,8 +92,12 @@ export function buildHierarchy(
             secondaryValues
         );
         const additional = additionalValue.get(node.name) || {value: 0, shallowValue: 0};
-        node.value += additional.value;
-        node.shallowValue = (node.shallowValue || 0) + (additional.shallowValue || 0);
+        if (additional.value !== 0) {
+            node.value += additional.value;
+        }
+        if (additional.shallowValue !== 0) {
+            node.shallowValue = (node.shallowValue || 0) + additional.shallowValue;
+        }
         children.push(node);
     });
     return {
@@ -108,7 +112,6 @@ export function buildHierarchy(
 }
 
 export function removeAllSmall(node: d3.HierarchyNode<TreeMapNode>, radius: number): d3.HierarchyNode<TreeMapNode> | null {
-    console.log(node);
     if (node.children === undefined) {
         invariant(node.value !== undefined, `node.value is undefined for ${node.data.name}`);
         return node.value >= radius ? node : null;

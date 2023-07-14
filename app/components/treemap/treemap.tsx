@@ -96,9 +96,6 @@ export default function TreeMap(props: TreeMapProps) {
             }
             return node;
         }
-        console.log(currentPath);
-        console.log(restorePath(0, builtTreeMap));
-        console.log(restorePath(0, builtTreeMap).parent);
         renderer.renderTreeMap(restorePath(0, builtTreeMap));
 
     }, [builtTreeMap,height, width]);

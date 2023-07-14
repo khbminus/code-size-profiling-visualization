@@ -21,11 +21,11 @@ export class TreeMapRenderer {
         this.group = svg
             .append("g")
         this.x = d3
-                .scaleLinear()
-                .rangeRound([0, this.width]);
+            .scaleLinear()
+            .rangeRound([0, this.width]);
         this.y = d3
-                .scaleLinear()
-                .rangeRound([0, this.height]);
+            .scaleLinear()
+            .rangeRound([0, this.height]);
         this.path = path.slice()
 
     }
@@ -69,7 +69,7 @@ export class TreeMapRenderer {
                 if (d.data.category === TreeMapNodeCategory.RETAINED) {
                     return "#56B870";
                 }
-                if (d.children) {
+                if (d.children || d.data.category === TreeMapNodeCategory.MIDDLE) {
                     return "#ccc";
                 }
                 return "#347EB4";
@@ -124,7 +124,9 @@ export class TreeMapRenderer {
             .attr("width", d => d === root ? this.width : this.x(d.x1) - this.x(d.x0))
             .attr("height", d => d === root ? 30 : this.y(d.y1) - this.y(d.y0));
     }
+
     private idMap: Map<TreeMapNode, number> = new Map();
+
     private getId(node: TreeMapNode): number {
         const value = this.idMap.get(node);
         if (value !== undefined) {
