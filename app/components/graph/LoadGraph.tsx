@@ -8,17 +8,14 @@ import invariant from "tiny-invariant";
 
 interface LoadGraphProps {
     nodes: SerializedNode<SigmaNodeAttributes>[],
-    edges: SerializedEdge<SigmaEdgeAttributes>[],
-    namesToRender: string[]
+    edges: SerializedEdge<SigmaEdgeAttributes>[]
 }
 
-export function LoadGraph({nodes, edges, namesToRender}: LoadGraphProps) {
+export function LoadGraph({nodes, edges}: LoadGraphProps) {
     const {positions, assign} = useLayoutCircular();
     const loadGraph = useLoadGraph();
     useEffect(() => {
-        const set = new Set(namesToRender);
         const graph = new MultiDirectedGraph();
-        const filteredNodes = nodes.filter(x => set.has(x.key));
         
         graph.import({
             options: {
@@ -26,17 +23,11 @@ export function LoadGraph({nodes, edges, namesToRender}: LoadGraphProps) {
                 multi: true,
                 allowSelfLoops: true
             },
-            nodes: filteredNodes,
-            edges: edges.filter(x => set.has(x.source) && set.has(x.target))
+            nodes: nodes,
+            edges: edges
         });
         loadGraph(graph);
-        const allPositionAreZero = filteredNodes.every(({attributes}) => {
-            invariant(attributes, "attributes is undefined");
-            return attributes.x == 0 && attributes.y == 0;
-        })
-        if (allPositionAreZero) {
-            assign();
-        }
-    }, [assign, positions, nodes, edges, loadGraph, namesToRender]);
+        assign();
+    }, [assign, positions, nodes, edges, loadGraph]);
     return null;
 }

@@ -10,14 +10,16 @@ import type {IrEntry} from "~/models/irMaps.server";
 import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
 import {useRef, useState} from "react";
+import GraphFilterController from "~/components/graph/GraphFilterController";
 
 export interface GraphProps {
     nodes: [string, IrEntry][],
     edges: Edge[],
-    renderNames: string[]
+    renderNames: string[],
+    maxDepth: number
 }
 
-export default function Graph({nodes, edges, renderNames}: GraphProps) {
+export default function Graph({nodes, edges, renderNames, maxDepth}: GraphProps) {
     const sigmaGraph = useRef(getSigmaGraph(nodes, edges));
     const [sigmaNodes, sigmaEdges] = sigmaGraph.current;
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
@@ -37,8 +39,9 @@ export default function Graph({nodes, edges, renderNames}: GraphProps) {
                                }
                            }}
     >
-        <LoadGraph nodes={sigmaNodes} edges={sigmaEdges} namesToRender={renderNames}/>
+        <LoadGraph nodes={sigmaNodes} edges={sigmaEdges}/>
         <ForceLayout/>
+        <GraphFilterController nameToRender={renderNames} maximumDepth={maxDepth}/>
         <GraphEventController setHovered={setHoveredNode}/>
         <GraphHoverComponent hoveredNode={hoveredNode}/>
     </SigmaContainer>

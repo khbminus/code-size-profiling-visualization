@@ -22,16 +22,23 @@ export const links: LinksFunction = () => [{
 
 export default function GraphPage() {
     const {nodes, edges} = useLoaderData<typeof loader>();
-    const [checked, setChecked] = useState(() =>
-        nodes.map(([name, _]) => name));
+    const [checked, setChecked] = useState<string[]>([]);
     const [treeViewNodes] = useState(() =>
         processNames(nodes.map(([name, _]) => name)));
 
+    const [maxDepth, setMaxDepth] = useState(3);
 
     return (
         <div id="content">
-            <Graph nodes={nodes} edges={edges} renderNames={checked}/>
+            <Graph nodes={nodes} edges={edges} renderNames={checked} maxDepth={maxDepth}/>
             <div className="treemap-side-bar">
+                <input
+                    type="range"
+                    min={"1"}
+                    max={"20"}
+                    value={maxDepth}
+                    onChange={e => setMaxDepth(e.target.valueAsNumber)}
+                />
                 <TreeView checked={checked} setCheck={setChecked}
                           nodes={treeViewNodes}/>
             </div>
