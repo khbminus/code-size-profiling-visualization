@@ -38,3 +38,5 @@ export async function getGraph(...directory: string[]): Promise<GraphData> {
 }
 
 export const getRegularGraphLeft = () => getGraph("left-graph");
+export const getRegularGraphRight = () => getGraph("right-graph");
+export const getDiffGraph = () => getGraph("diff-graph");

@@ -1,56 +1,41 @@
 import type {LinksFunction} from "@remix-run/node";
-import {json} from "@remix-run/node";
-import {getRegularGraphLeft} from "~/models/graph.server";
-import {useLoaderData} from "@remix-run/react";
-import {useState} from "react";
 import "@react-sigma/core/lib/react-sigma.min.css";
-import {processNames} from "~/components/tree-view/processData";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"
-import TreeView from "~/components/tree-view/TreeView";
-import Graph from "~/components/graph/Graph";
-import "style.css"
-
-export const loader = async () => {
-    const {nodes, edges} = await getRegularGraphLeft();
-    return json({nodes: [...nodes.entries()], edges: edges});
-}
+import styles from "style.css"
+import {Link} from "@remix-run/react";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
     href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-}
+},
+    {rel: "stylesheet", href: styles}
 ];
 
-export default function GraphPage() {
-    const {nodes, edges} = useLoaderData<typeof loader>();
-    const [checked, setChecked] = useState<string[]>([]);
-    const [treeViewNodes] = useState(() =>
-        processNames(nodes.map(([name, _]) => name)));
-
-    const [maxDepth, setMaxDepth] = useState(3);
-
+export default function GraphIndexPage() {
     return (
-        <div id="content">
-            <Graph nodes={nodes} edges={edges} renderNames={checked} maxDepth={maxDepth}/>
-            <div className="treemap-side-bar">
-                <div className="depth-select-wrapper">
-                    <label htmlFor="depth-select">Select maximum depth: </label>
-                    <input
-                        className="depth-select"
-                        type="range"
-                        min="1"
-                        max="20"
-                        value={maxDepth}
-                        onChange={e => setMaxDepth(e.target.valueAsNumber)}
-                        name="depth-select"
-                    />
-                    <span className="depth-select-value">{maxDepth}</span>
-                </div>
-                <TreeView checked={checked} setCheck={setChecked}
-                          nodes={treeViewNodes}/>
-            </div>
+        <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
+            <h1>Graph visualizations</h1>
+            <ul>
+                <li>
+                    <Link to="/graph/left">
+                        Graph visualization of the first (left, old) version
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/graph/right">
+                        Graph visualization of the second (right, new) version
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/graph/diff">
+                        Graph visualization of the difference between two versions
+                    </Link>
+                </li>
+            </ul>
         </div>
     )
 }
+
+
 
 

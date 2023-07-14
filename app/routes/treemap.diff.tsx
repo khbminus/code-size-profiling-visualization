@@ -1,0 +1,27 @@
+import {getRetainedIrMapRight, getShallowIrMapRight} from "~/models/irMaps.server";
+import type {LinksFunction} from "@remix-run/node";
+import {json} from "@remix-run/node";
+import "react-checkbox-tree/lib/react-checkbox-tree.css"
+import styles from "style.css"
+import {useLoaderData} from "@remix-run/react";
+import TreeMapPage from "~/components/treemap/TreeMapPage";
+import {getRegularGraphRight} from "~/models/graph.server";
+export const links: LinksFunction = () => [{
+    rel: "stylesheet",
+    href: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+}, {
+    rel: "stylesheet",
+    href: styles
+}
+]
+
+
+export const loader = async () => {
+    return json({shallowMap: await getShallowIrMapRight(), retainedMap: await getRetainedIrMapRight()});
+}
+
+export default function LeftTreeMap() {
+    const {shallowMap, retainedMap} = useLoaderData<typeof loader>();
+    return <TreeMapPage shallowMap={shallowMap} retainedMap={retainedMap}/>
+}
+

@@ -20,4 +20,4 @@ export async function getIrMap(...mapPath: string[]): Promise<IrMap> {
 export const getShallowIrMapLeft = async () => getIrMap("left-graph", "ir-sizes.json");
 export const getShallowIrMapRight = async () => getIrMap("ir-sizes-right.json");
 export const getRetainedIrMapLeft = async () => getIrMap("retained-left", "retained-sizes.json");
-export const RetainedIrMapRight = async () => getIrMap("retained-right", "retained-sizes.json");
+export const getRetainedIrMapRight = async () => getIrMap("retained-right", "retained-sizes.json");
