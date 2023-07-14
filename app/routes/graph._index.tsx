@@ -34,8 +34,10 @@ export default function GraphPage() {
     return (
         <div id="content">
             <Graph nodes={nodes} edges={edges} renderNames={checked}/>
+            <div className="treemap-side-bar">
             <TreeView checked={checked}  setCheck={setChecked}
                       nodes={treeViewNodes}/>
+            </div>
         </div>
     )
 }

@@ -18,17 +18,41 @@
     text-overflow: ellipsis;
 }
 .react-checkbox-tree {
-    right: 0;
-    top: 0;
-    position: absolute;
     overflow-x: hidden;
     overflow-y: auto;
     height: 95vh;
-    width: 20%;
 }
 
 .react-sigma {
     float: left;
     position: absolute;
     left: 0;
+}
+
+.treemap-side-bar {
+    width: 17%;
+    right: 0;
+    top: 0;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+.minimum-size-chooser {
+    display: flex;
+}
+.minimum-size-viewer {
+    /*float: right;*/
+    text-align: right;
+    width: 2.5em;
+}
+
+.size-label {
+    overflow: visible;
+}
+label {
+    white-space: nowrap;
+}
+
+#minimumSize {
+    width: 100%;
 }
