@@ -78,7 +78,10 @@ export function buildHierarchy(
             return;
         }
         const old = additionalValue.get(node.name) || {value: 0, shallowValue: 0};
-        additionalValue.set(node.name, {value: old.value + node.value, shallowValue: old.shallowValue + (node.shallowValue || 0)});
+        additionalValue.set(node.name, {
+            value: old.value + node.value,
+            shallowValue: old.shallowValue + (node.shallowValue || 0)
+        });
     });
     children = children.filter(x => !additionalValue.has(x.name));
 
@@ -112,14 +115,20 @@ export function buildHierarchy(
 }
 
 export function removeAllSmall(node: d3.HierarchyNode<TreeMapNode>, radius: number): d3.HierarchyNode<TreeMapNode> | null {
+    if (node.children?.length === 0) {
+        node.children = undefined;
+    }
+    invariant(node.value !== undefined, `node.value is undefined for ${node.data.name}`);
+    if (node.value < radius) {
+        return null;
+    }
     if (node.children === undefined) {
-        invariant(node.value !== undefined, `node.value is undefined for ${node.data.name}`);
-        return node.value >= radius ? node : null;
+        return node;
     }
     node.children = node
         .children
         .map(child => removeAllSmall(child, radius))
-        .filter((x): x is d3.HierarchyNode<TreeMapNode>=> x !== null);
+        .filter((x): x is d3.HierarchyNode<TreeMapNode> => x !== null);
     if (node.children.length === 0) {
         node.children = undefined;
     }
