@@ -1,12 +1,16 @@
 import {getRegularGraphLeft} from "~/models/graph.server";
-import {json, LinksFunction} from "@remix-run/node";
+import type { LinksFunction} from "@remix-run/node";
+import {json} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
 import GraphPage from "~/components/graph/GraphPage";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css";
+import invariant from "tiny-invariant";
+import {useMemo} from "react";
+
 export const loader = async () => {
-    const {nodes, edges} = await getRegularGraphLeft();
-    return json({nodes: [...nodes.entries()], edges: edges});
+    const {nodes, edges, retainedNodes} = await getRegularGraphLeft();
+    return json({nodes: [...nodes.entries()], edges: edges, retainedNodes: retainedNodes});
 }
 
 export const links: LinksFunction = () => [{
@@ -17,9 +21,12 @@ export const links: LinksFunction = () => [{
 ];
 
 export default function LeftGraph() {
-    const {nodes, edges} = useLoaderData<typeof loader>();
+    const {nodes, edges, retainedNodes} = useLoaderData<typeof loader>();
+    invariant(retainedNodes !== null, "retained sizes is null");
+    const retainedMap = useMemo(() => new Map(Object.entries(retainedNodes)), [retainedNodes]);
     return <GraphPage
         nodes={nodes}
         edges={edges}
+        retainedSizes={retainedMap}
     ></GraphPage>
 }

@@ -22,5 +22,6 @@ export default function LeftGraph() {
     return <GraphPage
         nodes={nodes}
         edges={edges}
+        retainedSizes={null}
     ></GraphPage>
 }

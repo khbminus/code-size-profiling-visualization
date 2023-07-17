@@ -8,10 +8,11 @@ import TypeTreeView from "~/components/tree-view/TypeTreeView";
 
 interface GraphPageProps {
     nodes: [string, IrEntry][],
+    retainedSizes: Map<string, IrEntry> | null
     edges: Edge[]
 }
 
-export default function GraphPage({nodes, edges}: GraphPageProps) {
+export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps) {
     const [checkedNames, setCheckedNames] = useState<string[]>([]);
     const [checkedNamesByType, setCheckedNameByType] = useState<string[]>([]);
     const renderNames = useMemo(() => {
@@ -23,10 +24,18 @@ export default function GraphPage({nodes, edges}: GraphPageProps) {
 
     const [maxDepth, setMaxDepth] = useState(3);
 
+    const [viewMode, setViewMode] = useState("shallow");
 
     return (
         <div id="content">
-            <Graph nodes={nodes} edges={edges} renderNames={renderNames} maxDepth={maxDepth}/>
+            <Graph
+                nodes={nodes}
+                edges={edges}
+                renderNames={renderNames}
+                maxDepth={maxDepth}
+                retainedNodes={retainedSizes}
+                showRetainedSizes={viewMode === "retained"}
+            />
             <div className="treemap-side-bar">
                 <div className="depth-select-wrapper">
                     <label htmlFor="depth-select">Select maximum depth: </label>
@@ -41,6 +50,17 @@ export default function GraphPage({nodes, edges}: GraphPageProps) {
                     />
                     <span className="depth-select-value">{maxDepth}</span>
                 </div>
+                {retainedSizes !== null
+                    ? <select
+                        name="viewMode"
+                        value={viewMode}
+                        onChange={e => setViewMode(e.target.value)}
+                    >
+                        <option value="shallow">Set shallow sizes as node radius</option>
+                        <option value="retained">Set retained sizes as node radius</option>
+                    </select>
+                    : <></>
+                }
                 <h4>Types:</h4>
                 <TypeTreeView irEntries={nodes} setCheckedByType={setCheckedNameByType} colored={true}/>
                 <h4>Names:</h4>

@@ -11,16 +11,19 @@ import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
 import {useRef, useState} from "react";
 import GraphFilterController from "~/components/graph/GraphFilterController";
+import GraphRadiusController from "~/components/graph/GraphRadiusController";
 
 export interface GraphProps {
     nodes: [string, IrEntry][],
+    retainedNodes: Map<string, IrEntry> | null,
+    showRetainedSizes: boolean
     edges: Edge[],
     renderNames: string[],
     maxDepth: number
 }
 
-export default function Graph({nodes, edges, renderNames, maxDepth}: GraphProps) {
-    const sigmaGraph = useRef(getSigmaGraph(nodes, edges));
+export default function Graph({nodes, edges, renderNames, maxDepth, retainedNodes, showRetainedSizes}: GraphProps) {
+    const sigmaGraph = useRef(getSigmaGraph(nodes, retainedNodes, edges));
     const [sigmaNodes, sigmaEdges] = sigmaGraph.current;
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
@@ -44,5 +47,10 @@ export default function Graph({nodes, edges, renderNames, maxDepth}: GraphProps)
         <GraphFilterController nameToRender={renderNames} maximumDepth={maxDepth}/>
         <GraphEventController setHovered={setHoveredNode}/>
         <GraphHoverComponent hoveredNode={hoveredNode}/>
+        {/*<GraphRadiusController*/}
+        {/*    showRetainedSizes={showRetainedSizes}*/}
+        {/*    nodes={nodes}*/}
+        {/*    retainedNodes={retainedNodes}*/}
+        {/*/>*/}
     </SigmaContainer>
 }

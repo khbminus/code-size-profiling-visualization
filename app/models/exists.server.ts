@@ -14,14 +14,13 @@ export const isRightDceEdgesExists = () => isPathExists("right-graph", "dce-grap
 
 export const isDiffIrSizesExists = () => isPathExists("diff-graph", "ir-sizes.json");
 export const isDiffDceGraphExists = () => isPathExists("diff-graph", "dce-graph.json");
-
-export const isLeftGraphExists = () => isLeftDceEdgesExists() && isLeftIrSizesExists();
-export const isRightGraphExists = () => isRightIrSizesExists() && isRightDceEdgesExists();
-export const isDiffGraphExists = () => isDiffIrSizesExists() && isDiffDceGraphExists();
-
 export const isLeftRetainedSizesExists = () => isPathExists("retained-left", "retained-sizes.json");
 export const isRightRetainedSizesExists = () => isPathExists("retained-right", "retained-sizes.json");
 export const isDiffRetainedSizesExists = () => isPathExists("retained-diff", "retained-sizes.json");
+export const isLeftGraphExists = () => isLeftDceEdgesExists() && isLeftIrSizesExists() && isLeftRetainedSizesExists();
+export const isRightGraphExists = () => isRightIrSizesExists() && isRightDceEdgesExists() && isRightRetainedSizesExists();
+export const isDiffGraphExists = () => isDiffIrSizesExists() && isDiffDceGraphExists();
+
 
 export const isLeftIrMapExists = () => isLeftIrSizesExists() && isLeftRetainedSizesExists();
 export const isRightIrMapExists = () => isRightIrSizesExists() && isRightRetainedSizesExists();

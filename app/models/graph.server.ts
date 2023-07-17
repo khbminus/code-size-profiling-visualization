@@ -1,11 +1,12 @@
-import type {IrEntry} from "~/models/irMaps.server";
+import type {IrEntry, IrMap} from "~/models/irMaps.server";
 import {promises as fs} from "fs";
 import {getIrMap} from "~/models/irMaps.server";
 import {getFilePath} from "~/models/utils";
 
 export type GraphData = {
     nodes: Map<string, IrEntry>,
-    edges: Edge[]
+    edges: Edge[],
+    retainedNodes: IrMap | null
 }
 
 export type Edge = {
@@ -15,15 +16,16 @@ export type Edge = {
     isTargetContagious: boolean
 }
 
-export async function getGraph(...directory: string[]): Promise<GraphData> {
-    const edgesPath = getFilePath(...directory, "dce-graph.json");
+export async function getGraph(graphPath: string, retainedPath?: string): Promise<GraphData> {
+    const edgesPath = getFilePath(graphPath, "dce-graph.json");
     return Promise
         .all(
             [
-                getIrMap(...directory, "ir-sizes.json"),
-                fs.readFile(edgesPath, 'utf-8').then(content => JSON.parse(content) as Edge[])
+                getIrMap(graphPath, "ir-sizes.json"),
+                fs.readFile(edgesPath, 'utf-8').then(content => JSON.parse(content) as Edge[]),
+                retainedPath !== undefined ? getIrMap(retainedPath, "retained-sizes.json") : new Promise<null>(() => null),
             ])
-        .then(([nodes, edges]) => {
+        .then(([nodes, edges, retainedNodes]) => {
             const nodesMap = new Map(Object.entries(nodes));
             edges.forEach(({source, target}) => {
                 if (!nodesMap.has(source)) {
@@ -33,10 +35,10 @@ export async function getGraph(...directory: string[]): Promise<GraphData> {
                     nodesMap.set(target, {size: 0, type: "unknown"});
                 }
             })
-            return {edges: edges, nodes: nodesMap};
+            return {edges: edges, nodes: nodesMap, retainedNodes: retainedNodes};
         });
 }
 
-export const getRegularGraphLeft = () => getGraph("left-graph");
-export const getRegularGraphRight = () => getGraph("right-graph");
+export const getRegularGraphLeft = () => getGraph("left-graph", "retained-left");
+export const getRegularGraphRight = () => getGraph("right-graph", "retained-right");
 export const getDiffGraph = () => getGraph("diff-graph");
