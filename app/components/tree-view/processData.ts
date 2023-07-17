@@ -4,7 +4,8 @@ import invariant from "tiny-invariant";
 type LookupNode = {
     label: string,
     value: string,
-    children: Map<string, LookupNode>
+    children: Map<string, LookupNode>,
+    isTerminal: boolean
 }
 export type Node = {
     label: string,
@@ -15,7 +16,7 @@ export type Node = {
 
 export function processNames(names: string[]): Node[] {
     const splitNames: string[][] = names.map(splitByDot);
-    let root: LookupNode = {label: "", value: "", children: new Map()}
+    let root: LookupNode = {label: "", value: "", children: new Map(), isTerminal: false}
     splitNames.forEach(split => {
             let currentVertex = root;
             let depth = 0;
@@ -27,12 +28,13 @@ export function processNames(names: string[]): Node[] {
                 value = value.concat(split[depth]);
                 let nextNode = currentVertex.children.get(split[depth]);
                 if (nextNode === undefined) {
-                    nextNode = {label: split[depth], value: value, children: new Map()}
+                    nextNode = {label: split[depth], value: value, children: new Map(), isTerminal: false}
                     currentVertex.children.set(split[depth], nextNode);
                 }
                 depth++;
                 currentVertex = nextNode;
             }
+            currentVertex.isTerminal = true;
         }
     );
     const converted = convertNode(root);
@@ -47,6 +49,14 @@ function convertNode(node: LookupNode): Node {
             label: node.label,
             value: node.value,
             title: node.value
+        }
+    }
+    if (children.length !== 0 && node.isTerminal) {
+        children.push({label: `${node.label} (Class)`, value: node.value, title: node.value});
+        return {
+            label: node.label,
+            value: `${node.value} (Non-leaf)`,
+            children: children
         }
     }
     return {
