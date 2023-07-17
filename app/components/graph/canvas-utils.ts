@@ -7,7 +7,7 @@ export function drawHover(context: CanvasRenderingContext2D, data: PlainObject, 
     const subLabelSize = size - 2;
 
     const label = data.label;
-    const subLabel = `Shallow size: ${data.realSize}`;
+    const subLabel = `Shallow size: ${data.realSize} / Retained size: ${data.retainedSize}`;
     const TEXT_COLOR = "#000000";
 
     // Then we draw the label background

@@ -9,9 +9,8 @@ import {GraphHoverComponent} from "~/components/graph/GraphHoverComponent";
 import type {IrEntry} from "~/models/irMaps.server";
 import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
-import {useRef, useState} from "react";
+import {useMemo, useState} from "react";
 import GraphFilterController from "~/components/graph/GraphFilterController";
-import GraphRadiusController from "~/components/graph/GraphRadiusController";
 
 export interface GraphProps {
     nodes: [string, IrEntry][],
@@ -23,8 +22,11 @@ export interface GraphProps {
 }
 
 export default function Graph({nodes, edges, renderNames, maxDepth, retainedNodes, showRetainedSizes}: GraphProps) {
-    const sigmaGraph = useRef(getSigmaGraph(nodes, retainedNodes, edges));
-    const [sigmaNodes, sigmaEdges] = sigmaGraph.current;
+    const sigmaGraph = useMemo(() =>
+            getSigmaGraph(nodes, retainedNodes, edges, showRetainedSizes),
+        [showRetainedSizes]
+    );
+    const [sigmaNodes, sigmaEdges] = sigmaGraph;
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
     return <SigmaContainer style={{height: "100vh", width: "80%"}}
