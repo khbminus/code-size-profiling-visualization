@@ -1,5 +1,5 @@
 import type {IrMap} from "~/models/irMaps.server";
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {processNames} from "~/components/tree-view/processData";
 import {ClientOnly} from "remix-utils";
 import Skeleton from "react-loading-skeleton";
@@ -7,6 +7,7 @@ import TreeMap from "~/components/treemap/treemap";
 import {TreeMapNodeCategory} from "~/components/treemap/processData";
 import MinimumSizeChooser from "~/components/treemap/MinimumSizeChooser";
 import TreeView from "~/components/tree-view/TreeView";
+import TypeTreeView from "~/components/tree-view/TypeTreeView";
 
 interface TreeMapPageProps {
     shallowMap: IrMap,
@@ -16,8 +17,20 @@ interface TreeMapPageProps {
 export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps) {
     const irMapSecondary = useMemo(() => new Map(Object.entries(shallowMap)), [shallowMap]);
     const irMapPrimary = useMemo(() => new Map(Object.entries(retainedMap)), [retainedMap]);
+    const entries = useMemo(() => [...irMapSecondary.entries()], [irMapSecondary]);
 
-    const [checked, setChecked] = useState([...irMapSecondary.keys()]);
+    const [checkedNames, setCheckedNames] = useState<string[]>([...irMapSecondary.keys()]);
+
+    const [checkedNamesByType, setCheckedNameByType] = useState<string[]>([...irMapSecondary.keys()]);
+    useEffect(() => {
+        setCheckedNames([...irMapSecondary.keys()]);
+        setCheckedNameByType([...irMapSecondary.keys()]);
+    }, [irMapSecondary]);
+
+    const renderNames = useMemo(() => {
+        const set1 = new Set(checkedNames);
+        return checkedNamesByType.filter(x => set1.has(x));
+    }, [checkedNames, checkedNamesByType]);
 
     const treeViewNodes = processNames([...irMapSecondary.keys()]);
 
@@ -35,7 +48,7 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
                         primaryIrMap={viewMode === "shallow" ? irMapSecondary : irMapPrimary}
                         secondaryIrMap={viewMode === "middle" ? irMapSecondary : null}
                         minimumRadius={minimumRadius}
-                        renderableNames={checked}
+                        renderableNames={renderNames}
                         topCategory={viewMode === "shallow" ? TreeMapNodeCategory.SHALLOW : TreeMapNodeCategory.RETAINED}
                         width={window.innerWidth * 0.75}
                         height={window.innerHeight * 0.97}
@@ -58,11 +71,11 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
                         <option value="shallow">Show only shallow size</option>
                         <option value="retained">Show only retained size</option>
                     </select>
-                    <TreeView
-                        checked={checked}
-                        setCheck={setChecked}
-                        nodes={treeViewNodes}
-                    />
+                    <h4>Types:</h4>
+                    <TypeTreeView irEntries={entries} setCheckedByType={setCheckedNameByType}/>
+                    <h4>Names:</h4>
+                    <TreeView checked={checkedNames} setCheck={setCheckedNames}
+                              nodes={treeViewNodes}/>
                 </div>
             </div>}
     </ClientOnly>

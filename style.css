@@ -18,9 +18,7 @@
     text-overflow: ellipsis;
 }
 .react-checkbox-tree {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 95vh;
+    /*height: 95vh;*/
 }
 
 .react-sigma {
@@ -31,6 +29,9 @@
 
 .treemap-side-bar {
     width: 24.5%;
+    height: 95%;
+    overflow-x: hidden;
+    overflow-y: auto;
     right: 0;
     top: 0;
     position: absolute;
