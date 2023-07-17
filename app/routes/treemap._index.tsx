@@ -3,6 +3,7 @@ import "@react-sigma/core/lib/react-sigma.min.css";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css"
 import {Link} from "@remix-run/react";
+import {isDiffIrMapExists, isLeftIrMapExists, isRightIrMapExists} from "~/models/exists.server";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -13,23 +14,31 @@ export const links: LinksFunction = () => [{
 
 export default function GraphIndexPage() {
     return (
-        <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
+        <div style={{fontFamily: "system-ui, sans-serif", lineHeight: "1.8"}}>
             <h1>Treemap visualizations</h1>
             <ul>
                 <li>
-                    <Link to="/treemap/left">
-                        Treemap visualization of the first (left, old) version
-                    </Link>
+                    {isLeftIrMapExists() ?
+                        <Link to="/treemap/left">
+                            Treemap visualization of the first (left, old) version
+                        </Link>
+                        : <></>
+                    }
                 </li>
                 <li>
-                    <Link to="/treemap/right">
-                        Treemap visualization of the second (right, new) version
-                    </Link>
+                    {isRightIrMapExists() ?
+                        <Link to="/treemap/right">
+                            Treemap visualization of the second (right, new) version
+                        </Link>
+                        : <></>
+                    }
                 </li>
                 <li>
-                    <Link to="/treemap/diff">
-                        Treemap visualization of the difference between two versions
-                    </Link>
+                    {isDiffIrMapExists() ? <Link to="/treemap/diff">
+                            Treemap visualization of the difference between two versions
+                        </Link>
+                        : <></>
+                    }
                 </li>
             </ul>
         </div>
