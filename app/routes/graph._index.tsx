@@ -4,6 +4,7 @@ import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css"
 import {Link, useLoaderData} from "@remix-run/react";
 import {isDiffGraphExists, isLeftGraphExists, isRightGraphExists} from "~/models/exists.server";
+import {json} from "@remix-run/node";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -13,7 +14,7 @@ export const links: LinksFunction = () => [{
 ];
 
 export const loader = () => {
-    return {leftGraph: isLeftGraphExists(), rightGraph: isRightGraphExists(), diffGraph: isDiffGraphExists()}
+    return json({leftGraph: isLeftGraphExists(), rightGraph: isRightGraphExists(), diffGraph: isDiffGraphExists()})
 }
 
 export default function GraphIndexPage() {

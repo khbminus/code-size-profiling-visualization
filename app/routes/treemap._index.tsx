@@ -2,8 +2,9 @@ import type {LinksFunction} from "@remix-run/node";
 import "@react-sigma/core/lib/react-sigma.min.css";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css"
-import {Link} from "@remix-run/react";
+import {Link, useLoaderData} from "@remix-run/react";
 import {isDiffIrMapExists, isLeftIrMapExists, isRightIrMapExists} from "~/models/exists.server";
+import {json} from "@remix-run/node";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -12,34 +13,40 @@ export const links: LinksFunction = () => [{
     {rel: "stylesheet", href: styles}
 ];
 
+export const loader = () => {
+    return json({leftIrMap: isLeftIrMapExists(), rightIrMap: isRightIrMapExists(), diffIrMap: isDiffIrMapExists()});
+}
+
 export default function GraphIndexPage() {
+    const {leftIrMap, rightIrMap, diffIrMap} = useLoaderData<typeof loader>();
     return (
         <div style={{fontFamily: "system-ui, sans-serif", lineHeight: "1.8"}}>
             <h1>Treemap visualizations</h1>
             <ul>
-                <li>
-                    {isLeftIrMapExists() ?
+                {leftIrMap ?
+                    <li>
                         <Link to="/treemap/left">
                             Treemap visualization of the first (left, old) version
                         </Link>
-                        : <></>
-                    }
-                </li>
-                <li>
-                    {isRightIrMapExists() ?
+                    </li>
+                    : <></>
+                }
+                {rightIrMap ?
+                    <li>
                         <Link to="/treemap/right">
                             Treemap visualization of the second (right, new) version
                         </Link>
-                        : <></>
-                    }
-                </li>
-                <li>
-                    {isDiffIrMapExists() ? <Link to="/treemap/diff">
+                    </li>
+                    : <></>
+                }
+                {diffIrMap ?
+                    <li>
+                        <Link to="/treemap/diff">
                             Treemap visualization of the difference between two versions
                         </Link>
-                        : <></>
-                    }
-                </li>
+                    </li>
+                    : <></>
+                }
             </ul>
         </div>
     )
