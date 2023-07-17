@@ -42,7 +42,7 @@ export default function GraphPage({nodes, edges}: GraphPageProps) {
                     <span className="depth-select-value">{maxDepth}</span>
                 </div>
                 <h4>Types:</h4>
-                <TypeTreeView irEntries={nodes} setCheckedByType={setCheckedNameByType}/>
+                <TypeTreeView irEntries={nodes} setCheckedByType={setCheckedNameByType} colored={true}/>
                 <h4>Names:</h4>
                 <TreeView checked={checkedNames} setCheck={setCheckedNames}
                           nodes={treeViewNodes}/>

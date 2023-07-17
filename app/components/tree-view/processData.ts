@@ -1,5 +1,6 @@
 import {splitByDot} from "~/utils";
 import invariant from "tiny-invariant";
+import type {ReactNode} from "react";
 
 type LookupNode = {
     label: string,
@@ -8,7 +9,7 @@ type LookupNode = {
     isTerminal: boolean
 }
 export type Node = {
-    label: string,
+    label: ReactNode,
     value: string,
     children?: Array<Node>,
     title?: string

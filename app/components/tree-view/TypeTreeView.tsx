@@ -3,10 +3,12 @@ import {useEffect, useMemo, useState} from "react";
 import TreeView from "~/components/tree-view/TreeView";
 import type {Node} from "~/components/tree-view/processData";
 import invariant from "tiny-invariant";
+import {palette} from "~/components/palette";
 
 interface TypeTreeViewProps {
     irEntries: [string, IrEntry][],
     setCheckedByType: (newValue: string[]) => void
+    colored: boolean
 }
 
 function buildMap(irEntries: [string, IrEntry][]) {
@@ -19,13 +21,16 @@ function buildMap(irEntries: [string, IrEntry][]) {
     return returnValue;
 }
 
-export default function TypeTreeView({irEntries, setCheckedByType}: TypeTreeViewProps) {
+export default function TypeTreeView({irEntries, setCheckedByType, colored}: TypeTreeViewProps) {
     const typeMap = useMemo(() => buildMap(irEntries), [irEntries]);
     const [checkedTypes, setCheckedTypes] = useState([...typeMap.keys()]);
-    const nodes = useMemo(() => [...typeMap.keys()].map((name: string): Node => ({
-        label: `type: ${name}`,
-        value: name
-    })), [typeMap])
+    const nodes = useMemo(() => [...typeMap.keys()].map((name: string): Node => {
+        const label = colored ? <>Type: <span style={{color: palette.get(name)}}>{name}</span></> : <>Type: {name}</>
+        return {
+            label: label,
+            value: name
+        }
+    }), [typeMap, colored])
     useEffect(() => {
         const allNames = [...typeMap.keys()].reduce((a, b) => {
             const arr = typeMap.get(b);

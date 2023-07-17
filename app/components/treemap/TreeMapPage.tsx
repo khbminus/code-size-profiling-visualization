@@ -72,7 +72,7 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
                         <option value="retained">Show only retained size</option>
                     </select>
                     <h4>Types:</h4>
-                    <TypeTreeView irEntries={entries} setCheckedByType={setCheckedNameByType}/>
+                    <TypeTreeView irEntries={entries} setCheckedByType={setCheckedNameByType} colored={false}/>
                     <h4>Names:</h4>
                     <TreeView checked={checkedNames} setCheck={setCheckedNames}
                               nodes={treeViewNodes}/>

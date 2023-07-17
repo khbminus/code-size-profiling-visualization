@@ -1,7 +1,7 @@
 import {useSigma} from "@react-sigma/core";
 import {useEffect} from "react";
 import {useDebounce} from "~/utils";
-import drawHover from "sigma/rendering/canvas/hover";
+import {drawHover} from "~/components/graph/canvas-utils";
 
 export function GraphHoverComponent({hoveredNode}: { hoveredNode: string | null }) {
     const sigma = useSigma();
