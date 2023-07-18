@@ -8,7 +8,7 @@ import {GraphHoverComponent} from "~/components/graph/GraphHoverComponent";
 import type {IrEntry} from "~/models/irMaps.server";
 import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
-import {useMemo, useRef, useState} from "react";
+import {useRef, useState} from "react";
 import GraphFilterController from "~/components/graph/GraphFilterController";
 import NodeWithRadius from "~/components/graph/customNodeProgram";
 
