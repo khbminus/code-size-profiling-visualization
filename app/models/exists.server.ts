@@ -19,7 +19,7 @@ export const isRightRetainedSizesExists = () => isPathExists("retained-right", "
 export const isDiffRetainedSizesExists = () => isPathExists("retained-diff", "retained-sizes.json");
 export const isLeftGraphExists = () => isLeftDceEdgesExists() && isLeftIrSizesExists() && isLeftRetainedSizesExists();
 export const isRightGraphExists = () => isRightIrSizesExists() && isRightDceEdgesExists() && isRightRetainedSizesExists();
-export const isDiffGraphExists = () => isDiffIrSizesExists() && isDiffDceGraphExists();
+export const isDiffGraphExists = () => isDiffIrSizesExists() && isDiffDceGraphExists() && isDiffRetainedSizesExists();
 
 
 export const isLeftIrMapExists = () => isLeftIrSizesExists() && isLeftRetainedSizesExists();
