@@ -12,6 +12,7 @@ export interface SigmaNodeAttributes extends Attributes {
     size: number;
     realSize: number;
     retainedSize: number;
+    shallowSize: number;
 }
 
 export interface SigmaEdgeAttributes extends Attributes {
@@ -25,12 +26,17 @@ export default function getSigmaGraph(
     edges: Edge[],
     showRetainedSizes: boolean
 ): [SerializedNode<SigmaNodeAttributes>[], SerializedEdge<SigmaEdgeAttributes>[]] {
-    const domainSet = !showRetainedSizes || retainedNodes === null
-        ? nodes.map(([_, {size}]) => size)
-        : [...retainedNodes.values()].map(({size}) => size)
+    const domainSet = nodes.map(([_, {size}]) => size)
+    const retainedDomainSet = !showRetainedSizes || retainedNodes === null
+        ? null
+        : [...retainedNodes.values()].map(({size}) => size);
 
     const sizeScale = d3.scaleLinear()
         .domain([0, domainSet.reduce((a, b) => Math.max(a, b))])
+        .range([5, 150]);
+
+    const retainedSizeScale = retainedDomainSet == null ? sizeScale : d3.scaleLinear()
+        .domain([0, retainedDomainSet.reduce((a, b) => Math.max(a, b))])
         .range([5, 150]);
 
     const sigmaNodes = nodes
@@ -42,11 +48,10 @@ export default function getSigmaGraph(
                     y: 0,
                     label: name,
                     color: palette.get(attrs.type),
-                    size: sizeScale(showRetainedSizes && retainedNodes !== null
-                        ? (retainedNodes.get(name)?.size || 0)
-                        : attrs.size),
+                    size: retainedSizeScale(retainedNodes?.get(name)?.size || attrs.size),
                     realSize: attrs.size,
-                    retainedSize: retainedNodes?.get(name)?.size || 0
+                    shallowSize: sizeScale(attrs.size),
+                    retainedSize: retainedSizeScale(retainedNodes?.get(name)?.size || attrs.size)
                 },
             }
         });

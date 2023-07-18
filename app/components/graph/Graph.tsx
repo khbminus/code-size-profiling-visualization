@@ -1,5 +1,4 @@
 import {MultiDirectedGraph} from "graphology";
-import NodeFastProgram from "sigma/rendering/webgl/programs/node.fast";
 import EdgeArrowProgram from "sigma/rendering/webgl/programs/edge.arrow";
 import {SigmaContainer} from "@react-sigma/core";
 import {LoadGraph} from "~/components/graph/LoadGraph";
@@ -11,6 +10,7 @@ import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
 import {useMemo, useState} from "react";
 import GraphFilterController from "~/components/graph/GraphFilterController";
+import NodeWithRadius from "~/components/graph/customNodeProgram";
 
 export interface GraphProps {
     nodes: [string, IrEntry][],
@@ -37,7 +37,7 @@ export default function Graph({nodes, edges, allowedNames, renderNames, maxDepth
                                defaultEdgeType: "arrow",
                                labelDensity: 0.1,
                                nodeProgramClasses: {
-                                   "fast": NodeFastProgram
+                                   "fast": NodeWithRadius
                                },
                                defaultNodeType: "fast",
                                edgeProgramClasses: {
