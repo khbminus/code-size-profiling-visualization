@@ -1,20 +1,22 @@
 import {useSigma} from "@react-sigma/core";
-import {useEffect} from "react";
+import {useEffect, useMemo} from "react";
 import {bfsFromNode} from "graphology-traversal";
 
 interface GraphFilterControllerProps {
     nameToRender: string[],
-    maximumDepth: number
+    maximumDepth: number,
+    allowedNames: string[]
 }
 
-export default function GraphFilterController({nameToRender, maximumDepth}: GraphFilterControllerProps) {
+export default function GraphFilterController({nameToRender, maximumDepth, allowedNames}: GraphFilterControllerProps) {
     const sigma = useSigma();
     const graph = sigma.getGraph();
+    const allowedNameSet = useMemo(() => new Set(allowedNames), [allowedNames]);
     useEffect(() => {
             const visited = new Set<string>();
             nameToRender.forEach(nodeName => {
                 bfsFromNode(graph, nodeName, (visitedNode, attr, depth) => {
-                    if (visited.has(visitedNode)) {
+                    if (visited.has(visitedNode) || !allowedNameSet.has(visitedNode)) {
                         return true;
                     }
                     visited.add(visitedNode);
@@ -25,7 +27,7 @@ export default function GraphFilterController({nameToRender, maximumDepth}: Grap
                 graph.setNodeAttribute(node, "hidden", !visited.has(node));
             })
         },
-        [nameToRender, graph, maximumDepth]
+        [allowedNameSet, nameToRender, graph, maximumDepth, allowedNames]
     );
     return <></>;
 }

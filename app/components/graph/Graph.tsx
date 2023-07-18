@@ -18,10 +18,11 @@ export interface GraphProps {
     showRetainedSizes: boolean
     edges: Edge[],
     renderNames: string[],
-    maxDepth: number
+    maxDepth: number,
+    allowedNames: string[]
 }
 
-export default function Graph({nodes, edges, renderNames, maxDepth, retainedNodes, showRetainedSizes}: GraphProps) {
+export default function Graph({nodes, edges, allowedNames, renderNames, maxDepth, retainedNodes, showRetainedSizes}: GraphProps) {
     const sigmaGraph = useMemo(() =>
             getSigmaGraph(nodes, retainedNodes, edges, showRetainedSizes),
         [showRetainedSizes]
@@ -46,7 +47,7 @@ export default function Graph({nodes, edges, renderNames, maxDepth, retainedNode
     >
         <LoadGraph nodes={sigmaNodes} edges={sigmaEdges}/>
         <ForceLayout/>
-        <GraphFilterController nameToRender={renderNames} maximumDepth={maxDepth}/>
+        <GraphFilterController nameToRender={renderNames} maximumDepth={maxDepth} allowedNames={allowedNames}/>
         <GraphEventController setHovered={setHoveredNode}/>
         <GraphHoverComponent hoveredNode={hoveredNode}/>
         {/*<GraphRadiusController*/}

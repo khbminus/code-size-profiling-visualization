@@ -14,11 +14,7 @@ interface GraphPageProps {
 
 export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps) {
     const [checkedNames, setCheckedNames] = useState<string[]>([]);
-    const [checkedNamesByType, setCheckedNameByType] = useState<string[]>([]);
-    const renderNames = useMemo(() => {
-        const set1 = new Set(checkedNames);
-        return checkedNamesByType.filter(x => set1.has(x));
-    }, [checkedNames, checkedNamesByType]);
+    const [allowedNames, setAllowedNames] = useState<string[]>([]);
     const [treeViewNodes] = useState(() =>
         processNames(nodes.map(([name, _]) => name)));
 
@@ -31,10 +27,11 @@ export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps)
             <Graph
                 nodes={nodes}
                 edges={edges}
-                renderNames={renderNames}
+                renderNames={checkedNames}
                 maxDepth={maxDepth}
                 retainedNodes={retainedSizes}
                 showRetainedSizes={viewMode === "retained"}
+                allowedNames={allowedNames}
             />
             <div className="treemap-side-bar">
                 <div className="depth-select-wrapper">
@@ -61,8 +58,8 @@ export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps)
                     </select>
                     : <></>
                 }
-                <h4>Types:</h4>
-                <TypeTreeView irEntries={nodes} setCheckedByType={setCheckedNameByType} colored={true}/>
+                <h4>Types (disabling type remove all nodes of this type):</h4>
+                <TypeTreeView irEntries={nodes} setCheckedByType={setAllowedNames} colored={true}/>
                 <h4>Names:</h4>
                 <TreeView checked={checkedNames} setCheck={setCheckedNames}
                           nodes={treeViewNodes}/>
