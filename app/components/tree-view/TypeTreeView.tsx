@@ -5,6 +5,8 @@ import type {Node} from "~/components/tree-view/processData";
 import invariant from "tiny-invariant";
 import {palette} from "~/components/palette";
 
+const Color = require("color");
+
 interface TypeTreeViewProps {
     irEntries: [string, IrEntry][],
     setCheckedByType: (newValue: string[]) => void
@@ -25,7 +27,12 @@ export default function TypeTreeView({irEntries, setCheckedByType, colored}: Typ
     const typeMap = useMemo(() => buildMap(irEntries), [irEntries]);
     const [checkedTypes, setCheckedTypes] = useState([...typeMap.keys()]);
     const nodes = useMemo(() => [...typeMap.keys()].map((name: string): Node => {
-        const label = colored ? <>Type: <span style={{color: palette.get(name)}}>{name}</span></> : <>Type: {name}</>
+        const label = colored
+            ? <>Type: <span style={{
+                color: Color(palette.get(name)).rotate(180).hex(),
+                background: palette.get(name)
+            }}>{name}</span></>
+            : <>Type: {name}</>
         return {
             label: label,
             value: name
