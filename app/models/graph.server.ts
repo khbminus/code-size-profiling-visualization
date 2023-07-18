@@ -23,7 +23,7 @@ export async function getGraph(graphPath: string, retainedPath?: string): Promis
             [
                 getIrMap(graphPath, "ir-sizes.json"),
                 fs.readFile(edgesPath, 'utf-8').then(content => JSON.parse(content) as Edge[]),
-                retainedPath !== undefined ? getIrMap(retainedPath, "retained-sizes.json") : new Promise<null>(() => null),
+                retainedPath !== undefined ? getIrMap(retainedPath, "retained-sizes.json") : Promise.resolve(null),
             ])
         .then(([nodes, edges, retainedNodes]) => {
             const nodesMap = new Map(Object.entries(nodes));
