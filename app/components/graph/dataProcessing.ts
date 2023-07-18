@@ -13,6 +13,7 @@ export interface SigmaNodeAttributes extends Attributes {
     realSize: number;
     retainedSize: number;
     shallowSize: number;
+    realRetainedSize: number;
 }
 
 export interface SigmaEdgeAttributes extends Attributes {
@@ -23,11 +24,10 @@ export interface SigmaEdgeAttributes extends Attributes {
 export default function getSigmaGraph(
     nodes: [string, IrEntry][],
     retainedNodes: Map<string, IrEntry> | null,
-    edges: Edge[],
-    showRetainedSizes: boolean
+    edges: Edge[]
 ): [SerializedNode<SigmaNodeAttributes>[], SerializedEdge<SigmaEdgeAttributes>[]] {
     const domainSet = nodes.map(([_, {size}]) => size)
-    const retainedDomainSet = !showRetainedSizes || retainedNodes === null
+    const retainedDomainSet = retainedNodes === null
         ? null
         : [...retainedNodes.values()].map(({size}) => size);
 
@@ -50,7 +50,8 @@ export default function getSigmaGraph(
                     color: palette.get(attrs.type),
                     size: retainedSizeScale(retainedNodes?.get(name)?.size || attrs.size),
                     realSize: attrs.size,
-                    shallowSize: sizeScale(attrs.size),
+                    realRetainedSize: retainedNodes?.get(name)?.size || attrs.size,
+                    shallowSize: retainedSizeScale(attrs.size),
                     retainedSize: retainedSizeScale(retainedNodes?.get(name)?.size || attrs.size)
                 },
             }

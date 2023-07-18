@@ -8,26 +8,22 @@ import {GraphHoverComponent} from "~/components/graph/GraphHoverComponent";
 import type {IrEntry} from "~/models/irMaps.server";
 import type {Edge} from "~/models/graph.server";
 import getSigmaGraph from "~/components/graph/dataProcessing";
-import {useMemo, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import GraphFilterController from "~/components/graph/GraphFilterController";
 import NodeWithRadius from "~/components/graph/customNodeProgram";
 
 export interface GraphProps {
     nodes: [string, IrEntry][],
-    retainedNodes: Map<string, IrEntry> | null,
-    showRetainedSizes: boolean
+    retainedNodes: Map<string, IrEntry> | null
     edges: Edge[],
     renderNames: string[],
     maxDepth: number,
     allowedNames: string[]
 }
 
-export default function Graph({nodes, edges, allowedNames, renderNames, maxDepth, retainedNodes, showRetainedSizes}: GraphProps) {
-    const sigmaGraph = useMemo(() =>
-            getSigmaGraph(nodes, retainedNodes, edges, showRetainedSizes),
-        [showRetainedSizes]
-    );
-    const [sigmaNodes, sigmaEdges] = sigmaGraph;
+export default function Graph({nodes, edges, allowedNames, renderNames, maxDepth, retainedNodes}: GraphProps) {
+    const sigmaGraph = useRef(getSigmaGraph(nodes, retainedNodes, edges));
+    const [sigmaNodes, sigmaEdges] = sigmaGraph.current;
     const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
     return <SigmaContainer style={{height: "100vh", width: "80%"}}
@@ -50,10 +46,5 @@ export default function Graph({nodes, edges, allowedNames, renderNames, maxDepth
         <GraphFilterController nameToRender={renderNames} maximumDepth={maxDepth} allowedNames={allowedNames}/>
         <GraphEventController setHovered={setHoveredNode}/>
         <GraphHoverComponent hoveredNode={hoveredNode}/>
-        {/*<GraphRadiusController*/}
-        {/*    showRetainedSizes={showRetainedSizes}*/}
-        {/*    nodes={nodes}*/}
-        {/*    retainedNodes={retainedNodes}*/}
-        {/*/>*/}
     </SigmaContainer>
 }

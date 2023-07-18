@@ -1,8 +1,10 @@
 import type {NodeDisplayData} from "sigma/types";
-import {floatColor} from "sigma/utils";
+import {floatColor, parseColor} from "sigma/utils";
 import {AbstractNodeProgram} from "sigma/rendering/webgl/programs/common/node";
 import type {RenderParams} from "sigma/rendering/webgl/programs/common/program";
 import NodeFastProgram from "sigma/rendering/webgl/programs/node.fast";
+
+const Color = require("color");
 
 const POINTS = 2,
     ATTRIBUTES = 4;
@@ -97,18 +99,21 @@ export default class CustomNodeProgram extends AbstractNodeProgram {
         }
 
         const color = floatColor(data.color);
+        const parsedColor = parseColor(data.color);
+        parsedColor.r = 255 - parsedColor.r;
+        parsedColor.g = 255 - parsedColor.g;
+        parsedColor.b = 255 - parsedColor.b;
+
         array[i++] = data.x;
         array[i++] = data.y;
         array[i++] = data.size;
         array[i++] = color;
-        console.log(data.shallowSize, data.size, data)
 
         array[i++] = data.x;
         array[i++] = data.y;
-        array[i++] = data.shallowSize * (data.size / data.retainedSize);
-        array[i++] = floatColor("#000");
-
-
+        // @ts-ignore
+        array[i++] = data.shallowSize;
+        array[i++] = floatColor(Color(data.color).rotate(180).opaquer(0.7).hex());
     }
 
     render(params: RenderParams): void {
@@ -123,7 +128,7 @@ export default class CustomNodeProgram extends AbstractNodeProgram {
         gl.uniform1f(this.scaleLocation, params.scalingRatio);
         gl.uniformMatrix3fv(this.matrixLocation, false, params.matrix);
 
-        gl.drawArrays(gl.POINTS, 0, this.array.length / ATTRIBUTES * 2);
+        gl.drawArrays(gl.POINTS, 0, this.array.length / ATTRIBUTES);
     }
 
 }

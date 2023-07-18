@@ -18,6 +18,7 @@
     "@remix-run/react": "^1.18.1",
     "@remix-run/serve": "^1.18.1",
     "@types/d3": "^7.4.0",
+    "color": "^4.2.3",
     "d3": "^7.8.5",
     "graphology": "^0.25.1",
     "graphology-metrics": "^2.1.0",

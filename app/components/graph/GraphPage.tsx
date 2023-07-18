@@ -20,8 +20,6 @@ export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps)
 
     const [maxDepth, setMaxDepth] = useState(3);
 
-    const [viewMode, setViewMode] = useState("shallow");
-
     return (
         <div id="content">
             <Graph
@@ -30,7 +28,6 @@ export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps)
                 renderNames={checkedNames}
                 maxDepth={maxDepth}
                 retainedNodes={retainedSizes}
-                showRetainedSizes={viewMode === "retained"}
                 allowedNames={allowedNames}
             />
             <div className="treemap-side-bar">
@@ -47,17 +44,6 @@ export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps)
                     />
                     <span className="depth-select-value">{maxDepth}</span>
                 </div>
-                {retainedSizes !== null
-                    ? <select
-                        name="viewMode"
-                        value={viewMode}
-                        onChange={e => setViewMode(e.target.value)}
-                    >
-                        <option value="shallow">Set shallow sizes as node radius</option>
-                        <option value="retained">Set retained sizes as node radius</option>
-                    </select>
-                    : <></>
-                }
                 <h4>Types (disabling type remove all nodes of this type):</h4>
                 <TypeTreeView irEntries={nodes} setCheckedByType={setAllowedNames} colored={true}/>
                 <h4>Names:</h4>
