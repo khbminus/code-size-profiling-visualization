@@ -6,6 +6,7 @@ import SourceView from "~/components/source-map/SourceView";
 import {useMemo} from "react";
 import iwanthue from "iwanthue";
 import Palette from "iwanthue/palette";
+import {SpanMetaHolder} from "~/components/source-map/child-function";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-kotlin");
@@ -33,14 +34,15 @@ export default function SourceMapVisualization() {
     const palette = useMemo(() => Palette.generateFromValues(
         "offsets",
         watSegments.map(x => x.startOffsetGenerated),
-        {colorSpace: "pastel",}
+        {colorSpace: "pastel", seed: "LetsTryAnotherOne"}
     ), [watSegments]);
+    const metaHolder = new Map<number, SpanMetaHolder>();
     return <div className="content-container flex min-h-screen max-h-screen font-mono">
         <div className="kt-source flex-1 whitespace-pre-line overflow-y-scroll">
-            <SourceView language="kotlin" text={kotlinText} segments={kotlinSegments} palette={palette}/>
+            <SourceView language="kotlin" text={kotlinText} segments={kotlinSegments} palette={palette} metaHolder={metaHolder}/>
         </div>
         <div className="wasm-source flex-1 whitespace-pre-line overflow-y-scroll">
-            <SourceView language="wasm" text={wasmText} segments={watSegments} palette={palette}/>
+            <SourceView language="wasm" text={wasmText} segments={watSegments} palette={palette} metaHolder={metaHolder}/>
         </div>
     </div>
 }
