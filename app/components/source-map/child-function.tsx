@@ -10,11 +10,11 @@ import invariant from "tiny-invariant";
 const Color = require("color");
 
 export type SpanMetaHolder = {
-    onHoverStart: (() => void)[],
-    onHoverEnd: (() => void)[]
+    onHoverStart: (() => void),
+    onHoverEnd: (() => void)
 };
 
-export default function buildChildFunction(queue: Queue<SourceMapSegment>, colors: Palette<number>, metaHolder: Map<number, SpanMetaHolder>) {
+export default function buildChildFunction(queue: Queue<SourceMapSegment>, colors: Palette<number>, metaHolder: Map<string, SpanMetaHolder>) {
     return function childFunction({style, tokens, getTokenProps, getLineProps}: RenderProps) {
         const nextQueue = new Queue(...queue);
         return <pre style={style}>
@@ -45,7 +45,7 @@ interface LineComponentProps {
     index: number,
     segments: Queue<SourceMapSegment>,
     colors: Palette<number>,
-    metaHolder: Map<number, SpanMetaHolder>
+    metaHolder: Map<string, SpanMetaHolder>
 }
 
 export function LineComponent({tokens, getLineProps, getTokenProps, lineNumber, index, segments, colors, metaHolder}: LineComponentProps) {
@@ -78,7 +78,7 @@ interface TokenProps {
     column: number,
     segments: Queue<SourceMapSegment>,
     colors: Palette<number>,
-    metaHolder: Map<number, SpanMetaHolder>
+    metaHolder: Map<string, SpanMetaHolder>
 }
 
 export function TokenComponent(
@@ -86,40 +86,44 @@ export function TokenComponent(
 ) {
     let color: string | null = null;
     const ref = useRef<HTMLSpanElement | null>(null);
+
+    const onHoverStart = () => {
+        const current = ref.current;
+        if (current !== null) {
+            current.style.borderWidth = "1px";
+            current.style.borderColor = "black";
+            if (window !== undefined) {
+                current.scrollIntoView({behavior: "smooth"});
+            }
+        }
+    };
+    const onHoverEnd = () => {
+        const current = ref.current;
+        if (current !== null) {
+            current.style.borderWidth = "0";
+        }
+    };
+    let key: string | null = null;
+
     while (segments.length && shouldBeRemoved(segments.front, line, column + token.content.length)) {
         segments.dequeue();
     }
-    let offset: number | null = null;
     if (segments.length && inSegment(segments.front, line, column)) {
         color = colors.get(segments.front.startOffsetGenerated);
-        const onHoverStart = () => {
-            const current = ref.current;
-            if (current !== null) {
-                current.style.borderWidth = "1px";
-                current.style.borderColor = "black";
-            }
-        };
-        const onHoverEnd = () => {
-            const current = ref.current;
-            if (current !== null) {
-                current.style.borderWidth = "0";
-            }
-        };
-        const holder = metaHolder.get(segments.front.startOffsetGenerated) || {onHoverStart: [], onHoverEnd: []};
-        holder.onHoverStart.push(onHoverStart);
-        holder.onHoverEnd.push(onHoverEnd);
-        metaHolder.set(segments.front.startOffsetGenerated, holder);
-        offset = segments.front.startOffsetGenerated;
+        metaHolder.set(JSON.stringify({id: segments.front.id, type: segments.front.type}), {onHoverStart, onHoverEnd});
+        key = JSON.stringify({id: segments.front.id, type: segments.front.type == "kotlin" ? "wasm" : "kotlin"});
     }
-    const onMouseEnter = offset === null ? () => {
+    const onMouseEnter = key === null ? () => {
     } : () => {
-        invariant(offset !== null);
-        metaHolder.get(offset)?.onHoverStart.forEach(x => x());
+        invariant(key !== null);
+        onHoverStart();
+        metaHolder.get(key)?.onHoverStart();
     }
-    const onMouseExit = offset === null ? () => {
+    const onMouseExit = key === null ? () => {
     } : () => {
-        invariant(offset !== null);
-        metaHolder.get(offset)?.onHoverEnd.forEach(x => x());
+        invariant(key !== null);
+        metaHolder.get(key)?.onHoverEnd();
+        onHoverEnd();
     }
     return <span onMouseEnter={onMouseEnter} onMouseLeave={onMouseExit} key={nextKey}
                  ref={ref} {...tokenPropsWrapper(getTokenProps, color)({token})}/>

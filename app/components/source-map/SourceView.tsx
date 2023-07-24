@@ -1,16 +1,17 @@
 import {Highlight, themes} from "prism-react-renderer";
 import type {SourceMapSegment} from "~/models/sourceMap.server";
 import {Queue} from "queue-typescript"
-import buildChildFunction, {SpanMetaHolder} from "~/components/source-map/child-function";
+import type {SpanMetaHolder} from "~/components/source-map/child-function";
+import buildChildFunction from "~/components/source-map/child-function";
 import {useMemo} from "react";
-import Palette from "iwanthue/palette";
+import type Palette from "iwanthue/palette";
 
 export interface SourceViewProps {
     text: string,
     language: string,
     segments: SourceMapSegment[],
     palette: Palette<number>,
-    metaHolder: Map<number, SpanMetaHolder>
+    metaHolder: Map<string, SpanMetaHolder>
 }
 
 export default function SourceView({text, language, segments, palette, metaHolder}: SourceViewProps) {

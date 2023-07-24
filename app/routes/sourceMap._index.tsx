@@ -36,7 +36,9 @@ export default function SourceMapVisualization() {
         watSegments.map(x => x.startOffsetGenerated),
         {colorSpace: "pastel", seed: "LetsTryAnotherOne"}
     ), [watSegments]);
-    const metaHolder = new Map<number, SpanMetaHolder>();
+
+    const metaHolder = new Map<string, SpanMetaHolder>();
+
     return <div className="content-container flex min-h-screen max-h-screen font-mono">
         <div className="kt-source flex-1 whitespace-pre-line overflow-y-scroll">
             <SourceView language="kotlin" text={kotlinText} segments={kotlinSegments} palette={palette} metaHolder={metaHolder}/>

@@ -8,7 +8,9 @@ export type SourceMapSegment = {
     sourceStartLineColumn: number,
     sourceEndFileLine: number,
     sourceEndLineColumn: number,
-    startOffsetGenerated: number
+    startOffsetGenerated: number,
+    id: number,
+    type: "kotlin" | "wasm"
 }
 
 export type SourceMapMatch = {
@@ -47,5 +49,14 @@ export async function loadWasmSourceCode(): Promise<string> {
 export async function loadSegments(): Promise<SourceMapMatch[]> {
     return fs
         .readFile(path.join(process.cwd(), "source-maps", "segments.json"), "utf-8")
-        .then(x => JSON.parse(x));
+        .then(x => JSON.parse(x))
+        .then((segments: SourceMapMatch[]) => {
+            segments.forEach((value, i) => {
+                value.watSegment.id = i;
+                value.watSegment.type = "wasm";
+                value.kotlinSegment.id = i;
+                value.kotlinSegment.type = "kotlin";
+            });
+            return segments;
+        })
 }
