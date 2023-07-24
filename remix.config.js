@@ -20,5 +20,6 @@ module.exports = {
         "internmap",
         "robust-predicates",
         /@react-sigma\/*/
-    ]
+    ],
+    tailwind: true,
 };

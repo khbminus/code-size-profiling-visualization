@@ -17,6 +17,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .react-checkbox-tree {
     /*height: 95vh;*/
 }
@@ -38,9 +39,11 @@
     display: flex;
     flex-direction: column;
 }
-.minimum-size-chooser,.depth-select-wrapper {
+
+.minimum-size-chooser, .depth-select-wrapper {
     display: flex;
 }
+
 .minimum-size-viewer {
     /*float: right;*/
     text-align: right;
@@ -55,10 +58,23 @@
 .size-label {
     overflow: visible;
 }
+
 label {
     white-space: nowrap;
 }
 
-#minimumSize,.depth-select {
+#minimumSize, .depth-select {
     width: 100%;
 }
+
+/*td {*/
+/*    white-space: pre-line;*/
+/*}*/
+
+/*table, th, td {*/
+/*    border: 1px solid black;*/
+/*}*/
+
+/*table {*/
+/*    table-layout: auto;*/
+/*}*/
