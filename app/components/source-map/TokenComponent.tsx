@@ -12,18 +12,16 @@ interface TokenComponentProps {
 export default function TokenComponent({attrs, metaHolder, segmentInfo}: TokenComponentProps) {
     const ref = useRef<HTMLSpanElement | null>(null);
     const onHoverStart = () => {
-        console.log("HOVER STARTED", segmentInfo, ref.current);
         const span = ref.current
         if (span !== null) {
             span.style.borderWidth = "1px";
             span.style.borderColor = "black";
+            span.scrollIntoView({behavior: "smooth"});
             // span.style.borderCollapse = "collapse";
         }
     }
     const onHoverEnd = () => {
         const span = ref.current;
-        console.log("HOVER ENDED", segmentInfo, ref.current);
-
         if (span !== null) {
             span.style.borderWidth = "0px";
         }
@@ -41,7 +39,11 @@ export default function TokenComponent({attrs, metaHolder, segmentInfo}: TokenCo
     const invertedKey = getKey(inverted);
 
     const onMouseEnter = () => {
-        onHoverStart();
+        const span = ref.current;
+        if (span !== null) {
+            span.style.borderWidth = "1px";
+            span.style.borderColor = "black";
+        }
         metaHolder.get(invertedKey)?.onHoverStart();
     }
     const onMouseLeave = () => {
@@ -52,5 +54,5 @@ export default function TokenComponent({attrs, metaHolder, segmentInfo}: TokenCo
 }
 
 function getKey(segment: SegmentInfo): string {
-    return JSON.stringify(segment);
+    return `{"language": ${JSON.stringify(segment.language)}, "id": ${segment.id}"}`;
 }

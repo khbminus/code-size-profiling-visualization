@@ -49,9 +49,6 @@ function processToken(queuedSegments: Queue<SourceMapSegment>, colors: string[],
     if (intersection[0] >= intersection[1]) {
         return [token];
     }
-    if (segment.type == "wasm" && lineNumber < 100) {
-        console.log(intersection, segment, lineNumber, columnNumber);
-    }
     const leftPart: TokenWrapper = {
         text: token.text.slice(0, intersection[0] - columnNumber),
         attrs: structuredClone(token.attrs),
