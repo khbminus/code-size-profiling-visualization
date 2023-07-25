@@ -26,6 +26,7 @@
     "graphology-types": "^0.24.7",
     "isbot": "^3.6.8",
     "iwanthue": "^2.0.0",
+    "linked-list-typescript": "^1.0.15",
     "lodash": "^4.17.21",
     "prism-react-renderer": "^2.0.6",
     "prismjs": "^1.29.0",

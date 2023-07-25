@@ -19,7 +19,8 @@ module.exports = {
         "delaunator",
         "internmap",
         "robust-predicates",
-        /@react-sigma\/*/
+        /@react-sigma\/*/,
+        "linked-list-typescript"
     ],
     tailwind: true,
 };

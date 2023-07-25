@@ -2,20 +2,23 @@ import {promises as fs} from "fs";
 import process from "process";
 import path from "path";
 
-export type SourceMapSegment = {
-    sourceFileIndex: number,
-    sourceStartFileLine: number,
-    sourceStartLineColumn: number,
-    sourceEndFileLine: number,
-    sourceEndLineColumn: number,
-    startOffsetGenerated: number,
-    id: number,
-    type: "kotlin" | "wasm"
+export type FileCursor = {
+    line: number,
+    column: number
 }
 
+export type SourceMapSegment = {
+    startOffsetGenerated: number,
+    endOffsetGenerated: number,
+    sourceFileIndex: number,
+    startCursor: FileCursor,
+    endCursor: FileCursor,
+    id: number,
+    type: "wasm" | "kotlin"
+}
 export type SourceMapMatch = {
-    kotlinSegment: SourceMapSegment,
-    watSegment: SourceMapSegment
+    watSegment: SourceMapSegment,
+    kotlinSegment: SourceMapSegment
 }
 
 export async function loadKotlinSourceCode(): Promise<string> {

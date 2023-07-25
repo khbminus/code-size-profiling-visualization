@@ -4,8 +4,8 @@ import {useLoaderData} from "@remix-run/react";
 import {Prism} from "prism-react-renderer";
 import SourceView from "~/components/source-map/SourceView";
 import {useMemo} from "react";
-import Palette from "iwanthue/palette";
 import type {SpanMetaHolder} from "~/components/source-map/child-function";
+import iwanthue from "iwanthue";
 
 (typeof global !== "undefined" ? global : window).Prism = Prism;
 require("prismjs/components/prism-kotlin");
@@ -31,11 +31,10 @@ export default function SourceMapVisualization() {
         watSegments
     } = useLoaderData<typeof loader>();
 
-    const palette = useMemo(() => Palette.generateFromValues(
-        "offsets",
-        watSegments.map(x => x.startOffsetGenerated),
+    const palette = useMemo(() => iwanthue(
+        kotlinSegments.length,
         {colorSpace: "pastel", seed: "LetsTryAnotherOne"}
-    ), [watSegments]);
+    ), [kotlinSegments]);
 
     const metaHolder = new Map<string, SpanMetaHolder>();
 
