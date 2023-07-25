@@ -1,4 +1,4 @@
-import {loadKotlinSourceCode, loadSegments, loadWasmSourceCode} from "~/models/sourceMap.server";
+import {getKotlinFiles, getWatFiles, loadSegments} from "~/models/sourceMap.server";
 import {json} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
 import {Prism} from "prism-react-renderer";
@@ -13,20 +13,20 @@ require("prismjs/components/prism-wasm");
 
 
 export const loader = async () => {
-    const kotlinText = await loadKotlinSourceCode();
-    const wasmText = await loadWasmSourceCode();
     const segments = await loadSegments();
+    const kotlinFiles = await getKotlinFiles();
+    const watFiles = await getWatFiles();
     return json({
-        kotlinText: kotlinText,
-        wasmText: wasmText,
+        kotlinFiles: kotlinFiles,
+        watFiles: watFiles,
         kotlinSegments: segments.map(seg => seg.kotlinSegment),
         watSegments: segments.map(seg => seg.watSegment)
     });
 }
 export default function SourceMapVisualization() {
     const {
-        kotlinText,
-        wasmText,
+        kotlinFiles,
+        watFiles,
         kotlinSegments,
         watSegments
     } = useLoaderData<typeof loader>();
@@ -40,10 +40,24 @@ export default function SourceMapVisualization() {
 
     return <div className="content-container flex min-h-screen max-h-screen font-mono">
         <div className="kt-source flex-1 whitespace-pre-line overflow-y-scroll">
-            <SourceView language="kotlin" text={kotlinText} segments={kotlinSegments} palette={palette} metaHolder={metaHolder}/>
+            <SourceView
+                language="kotlin"
+                fileContent={kotlinFiles.fileContents}
+                files={kotlinFiles.files}
+                segments={kotlinSegments}
+                palette={palette}
+                metaHolder={metaHolder}
+            />
         </div>
         <div className="wasm-source flex-1 whitespace-pre-line overflow-y-scroll">
-            <SourceView language="wasm" text={wasmText} segments={watSegments} palette={palette} metaHolder={metaHolder}/>
+            <SourceView
+                language="wasm"
+                fileContent={watFiles.fileContents}
+                segments={watSegments}
+                palette={palette}
+                metaHolder={metaHolder}
+                files={watFiles.files}
+            />
         </div>
     </div>
 }
