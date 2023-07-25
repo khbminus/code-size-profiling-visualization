@@ -38,8 +38,8 @@ export default function SourceMapVisualization() {
 
     const metaHolder = new Map<string, SpanMetaHolder>();
 
-    return <div className="content-container flex min-h-screen max-h-screen font-mono">
-        <div className="kt-source flex-1 whitespace-pre-line overflow-y-scroll">
+    return <div className="content-container font-mono w-full">
+        <div className="kt-source flex-1 whitespace-pre-line w-1/2 absolute left-0">
             <SourceView
                 language="kotlin"
                 fileContent={kotlinFiles.fileContents}
@@ -49,7 +49,7 @@ export default function SourceMapVisualization() {
                 metaHolder={metaHolder}
             />
         </div>
-        <div className="wasm-source flex-1 whitespace-pre-line overflow-y-scroll">
+        <div className="wasm-source flex-1 whitespace-pre-line w-1/2 absolute right-0">
             <SourceView
                 language="wasm"
                 fileContent={watFiles.fileContents}

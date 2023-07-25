@@ -29,17 +29,19 @@ export default function SourceView({language, segments, palette, metaHolder, fil
     }, [segments]);
 
     const content = fileContent[selectedName];
-    return <div>
+    return <div className="min-h-screen max-h-screen overflow-y-hidden flex flex-col">
         <TabView selectedName={selectedName} setSelectedName={setSelectedName} names={files}/>
         {content === null
             ? <span className="text-9xl font-black">File content is not available</span>
-            : <Highlight
-                code={content}
-                language={language}
-                theme={themes.github}
-            >
-                {buildChildFunction(segmentsQueue, palette, metaHolder)}
-            </Highlight>
+            : <div className="overflow-y-scroll">
+                <Highlight
+                    code={content}
+                    language={language}
+                    theme={themes.github}
+                >
+                    {buildChildFunction(segmentsQueue, palette, metaHolder)}
+                </Highlight>
+            </div>
         }
     </div>
 }

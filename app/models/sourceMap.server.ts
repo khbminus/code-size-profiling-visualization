@@ -34,8 +34,8 @@ export type SourceFiles = {
 }
 
 
-export async function getFiles(...path: string[]): Promise<SourceFiles> {
-    return loadSourceMap(...path)
+export async function getFiles(...sourceMapPath: string[]): Promise<SourceFiles> {
+    return loadSourceMap(...sourceMapPath)
         .then(({sources, sourcesContent}) => {
             return Promise.all(sourcesContent.map((value, index) => {
                 if (value !== null) {
@@ -50,7 +50,7 @@ export async function getFiles(...path: string[]): Promise<SourceFiles> {
                 }
                 return Promise.resolve(null);
             }))
-                .then(readContent => ({files: sources, fileContents: readContent}));
+                .then(readContent => ({files: sources.map(x => path.basename(x)), fileContents: readContent}));
         });
 }
 
