@@ -5,6 +5,7 @@ import styles from "style.css"
 import {Link, useLoaderData} from "@remix-run/react";
 import {isDiffIrMapExists, isLeftIrMapExists, isRightIrMapExists} from "~/models/exists.server";
 import {json} from "@remix-run/node";
+import {linkClassName} from "~/utils";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -25,7 +26,7 @@ export default function GraphIndexPage() {
             <ul>
                 {leftIrMap ?
                     <li>
-                        <Link to="/treemap/left">
+                        <Link to="/treemap/left" className={linkClassName}>
                             Treemap visualization of the first (left, old) version
                         </Link>
                     </li>
@@ -33,7 +34,7 @@ export default function GraphIndexPage() {
                 }
                 {rightIrMap ?
                     <li>
-                        <Link to="/treemap/right">
+                        <Link to="/treemap/right" className={linkClassName}>
                             Treemap visualization of the second (right, new) version
                         </Link>
                     </li>
@@ -41,7 +42,7 @@ export default function GraphIndexPage() {
                 }
                 {diffIrMap ?
                     <li>
-                        <Link to="/treemap/diff">
+                        <Link to="/treemap/diff" className={linkClassName}>
                             Treemap visualization of the difference between two versions
                         </Link>
                     </li>

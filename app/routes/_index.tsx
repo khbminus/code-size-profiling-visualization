@@ -1,5 +1,6 @@
 import type { V2_MetaFunction } from "@remix-run/node";
 import {Link} from "@remix-run/react";
+import {linkClassName} from "~/utils";
 
 export const meta: V2_MetaFunction = () => {
   return [
@@ -14,13 +15,18 @@ export default function Index() {
       <h1>Welcome to Code Size Profiler</h1>
       <ul>
         <li>
-          <Link to="/graph">
+          <Link to="/graph" className={linkClassName}>
             Graph visualization
           </Link>
         </li>
         <li>
-          <Link to="/treemap">
+          <Link to="/treemap" className={linkClassName}>
             Treemap visualization
+          </Link>
+        </li>
+        <li>
+          <Link to="/sourcemap" className={linkClassName}>
+            Kotlin to WAT mapping
           </Link>
         </li>
       </ul>

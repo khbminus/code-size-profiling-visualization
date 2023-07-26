@@ -1,5 +1,7 @@
 import {useEffect, useState} from "react";
 
+export const linkClassName = "font-medium text-blue-600 underline hover:no-underline";
+
 export function splitByDot(x: string): string[] {
     const complement = {")": "(", "]": "[", ">": "<", "}": "{"};
     const chars = [...x]

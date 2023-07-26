@@ -5,6 +5,7 @@ import styles from "style.css"
 import {Link, useLoaderData} from "@remix-run/react";
 import {isDiffGraphExists, isLeftGraphExists, isRightGraphExists} from "~/models/exists.server";
 import {json} from "@remix-run/node";
+import {linkClassName} from "~/utils";
 
 export const links: LinksFunction = () => [{
     rel: "stylesheet",
@@ -25,7 +26,7 @@ export default function GraphIndexPage() {
             <ul>
                 {leftGraph
                     ? <li>
-                        <Link to="/graph/left">
+                        <Link to="/graph/left" className={linkClassName}>
                             Graph visualization of the first (left, old) version
                         </Link>
                     </li>
@@ -33,7 +34,7 @@ export default function GraphIndexPage() {
                 }
                 {rightGraph
                     ? <li>
-                        <Link to="/graph/right">
+                        <Link to="/graph/right" className={linkClassName}>
                             Graph visualization of the second (right, new) version
                         </Link>
                     </li>
@@ -41,7 +42,7 @@ export default function GraphIndexPage() {
                 }
                 {diffGraph
                     ? <li>
-                        <Link to="/graph/diff">
+                        <Link to="/graph/diff" className={linkClassName}>
                             Graph visualization of the difference between two versions
                         </Link>
                     </li>
