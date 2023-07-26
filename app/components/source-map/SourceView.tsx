@@ -17,18 +17,25 @@ export interface SourceViewProps {
 
 export default function SourceView({language, segments, palette, metaHolder, files, fileContent}: SourceViewProps) {
     const [selectedName, setSelectedName] = useState(0);
-    const segmentsQueue = useMemo(() => {
-        const copy = [...segments];
-        copy.sort((a, b) => {
+    const segmentsQueues = useMemo(() => {
+        const res: SourceMapSegment[][] = [];
+        for (let i = 0; i < files.length; i++) {
+            res.push([]);
+        }
+        segments.forEach(segment => {
+            res[segment.sourceFileIndex].push(segment);
+        })
+        res.forEach(arr => arr.sort((a, b) => {
             if (a.startCursor.line == b.startCursor.line) {
                 return a.startCursor.column - b.startCursor.column;
             }
             return a.startCursor.line - b.startCursor.line;
-        })
-        return new Queue(...copy);
+        }));
+        return res.map(arr => new Queue(...arr));
     }, [segments]);
 
     const content = fileContent[selectedName];
+    const queue = segmentsQueues[selectedName];
     return <div className="min-h-screen max-h-screen overflow-y-hidden flex flex-col">
         <TabView selectedName={selectedName} setSelectedName={setSelectedName} names={files}/>
         {content === null
@@ -39,7 +46,7 @@ export default function SourceView({language, segments, palette, metaHolder, fil
                     language={language}
                     theme={themes.github}
                 >
-                    {buildChildFunction(segmentsQueue, palette, metaHolder)}
+                    {buildChildFunction(queue, palette, metaHolder)}
                 </Highlight>
             </div>
         }
