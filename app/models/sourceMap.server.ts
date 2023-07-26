@@ -1,7 +1,7 @@
 import {promises as fs} from "fs";
 import * as fsSync from "fs";
-import process from "process";
 import path from "path";
+import {constructSourcePath} from "~/models/utils";
 
 export type FileCursor = {
     line: number,
@@ -73,11 +73,6 @@ export async function loadSegments(): Promise<SourceMapMatch[]> {
             });
             return segments;
         })
-}
-
-
-function constructSourcePath(...pieces: string[]) {
-    return path.join(process.cwd(), "source-maps", ...pieces);
 }
 
 export const getKotlinFiles = () => getFiles("kotlin.map");

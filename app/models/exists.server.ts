@@ -1,8 +1,13 @@
-import {getFilePath} from "~/models/utils";
+import {constructSourcePath, getFilePath} from "~/models/utils";
 import * as fs from "fs";
 
 function isPathExists(...path: string[]): boolean {
     const finalPath = getFilePath(...path);
+    return fs.existsSync(finalPath);
+}
+
+function isSourceMapPathExists(...parts: string[]): boolean {
+    const finalPath = constructSourcePath(...parts);
     return fs.existsSync(finalPath);
 }
 
@@ -25,3 +30,8 @@ export const isDiffGraphExists = () => isDiffIrSizesExists() && isDiffDceGraphEx
 export const isLeftIrMapExists = () => isLeftIrSizesExists() && isLeftRetainedSizesExists();
 export const isRightIrMapExists = () => isRightIrSizesExists() && isRightRetainedSizesExists();
 export const isDiffIrMapExists = () => isDiffIrSizesExists() && isDiffRetainedSizesExists()
+
+const existsKotlinSourceMap = () => isSourceMapPathExists("kotlin.map");
+const existsWatSourceMap = () => isSourceMapPathExists("wat.map");
+const existsSegments = () => isSourceMapPathExists("segments.json");
+export const isSourceMapExists = () => existsSegments() && existsWatSourceMap() && existsKotlinSourceMap()
