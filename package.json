@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
+    "@heroicons/react": "^2.0.18",
     "@react-sigma/core": "^3.4.2",
     "@react-sigma/layout-circular": "^3.4.2",
     "@react-sigma/layout-core": "^3.4.2",
