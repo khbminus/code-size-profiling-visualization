@@ -46,7 +46,7 @@ export default function getSigmaGraph(
                 attributes: {
                     x: 0,
                     y: 0,
-                    label: name,
+                    label: attrs.displayName !== undefined ? attrs.displayName : name,
                     color: palette.get(attrs.type),
                     size: retainedSizeScale(retainedNodes?.get(name)?.size || attrs.size),
                     realSize: attrs.size,

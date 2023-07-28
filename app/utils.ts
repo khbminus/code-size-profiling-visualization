@@ -8,13 +8,17 @@ export function splitByDot(x: string): string[] {
     const stack: string[] = []
     const res: string[] = []
     let current = ""
-    chars.forEach(c => {
-        if (c === ".") {
+    let stopSymbol = chars.findIndex(x => x === '|')
+    if (stopSymbol === -1) {
+        stopSymbol = chars.length
+    }
+    chars.slice(0, stopSymbol).forEach(c => {
+        if (c === "." || c == "/") {
             if (stack.length === 0) {
                 res.push(current)
                 current = "";
             } else {
-                current = current.concat(".");
+                current = current.concat(c);
             }
             return;
         }

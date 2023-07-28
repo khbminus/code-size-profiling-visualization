@@ -53,12 +53,12 @@ export function buildHierarchy(
 
     let children: TreeMapNode[] = leafsNames
         .map(([split, name]): TreeMapNode => {
-            const visualName = split[split.length - 1];
             const value = primaryValues.get(name) || {size: 0, type: "unknown"};
+            const visualName = splitByDot(value.displayName !== undefined ? value.displayName : name);
             if (secondaryValues !== null) {
                 const secondaryValue = secondaryValues.get(name) || {size: 0, type: "unknown"};
                 return {
-                    name: visualName,
+                    name: visualName[visualName.length - 1],
                     value: value.size,
                     shallowValue: secondaryValue.size,
                     category: TreeMapNodeCategory.RETAINED,
@@ -66,7 +66,7 @@ export function buildHierarchy(
                 };
             }
             return {
-                name: visualName,
+                name: visualName[visualName.length - 1],
                 value: value.size,
                 category: topCategory,
                 shallowValue: null,

@@ -3,7 +3,8 @@ import {getFilePath} from "~/models/utils";
 
 export type IrEntry = {
     size: number,
-    type: "function" | "property" | "field" | "anonymous initializer" | "unknown"
+    type: "function" | "property" | "field" | "anonymous initializer" | "unknown",
+    displayName ?: string,
 }
 
 export type IrMap = {
