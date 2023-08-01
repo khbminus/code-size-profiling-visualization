@@ -15,23 +15,13 @@ interface TreeMapPageProps {
 }
 
 export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps) {
-    const irMapSecondary = useMemo(() =>
-        new Map(
-            Object
-                .entries(shallowMap)
-                .map(([name, obj]) =>
-                    [obj.displayName || name, obj]
-                )
-        ), [shallowMap]);
-    const irMapPrimary = useMemo(() =>
-        new Map(
-            Object
-                .entries(retainedMap)
-                .map(([name, obj]) =>
-                    [obj.displayName || name, obj]
-                )
-        ), [retainedMap]);
+    const irMapSecondary = useMemo(() => new Map(Object.entries(shallowMap)), [shallowMap]);
+    const irMapPrimary = useMemo(() => new Map(Object.entries(retainedMap)), [retainedMap]);
     const entries = useMemo(() => [...irMapSecondary.entries()], [irMapSecondary]);
+    const bindings: [string, string][] = useMemo(
+        () => [...irMapSecondary.entries()]
+            .map(([x, e]) => [e.displayName || x, x]),
+        [irMapSecondary]);
 
     const [checkedNames, setCheckedNames] = useState<string[]>([...irMapSecondary.keys()]);
 
@@ -43,10 +33,10 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
 
     const renderNames = useMemo(() => {
         const set1 = new Set(checkedNames);
-        return checkedNamesByType.filter(x => set1.has(x));
+        return new Set(checkedNamesByType.filter(x => set1.has(x)));
     }, [checkedNames, checkedNamesByType]);
 
-    const treeViewNodes = useMemo(() => processNames([...irMapSecondary.keys()]), [irMapSecondary]);
+    const treeViewNodes = useMemo(() => processNames(bindings), [bindings]);
 
     const [minSize, maxSize] = useMemo(
         () => [...irMapPrimary.values()].reduce(([mn, mx], {size}) =>
@@ -66,6 +56,7 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
                         topCategory={viewMode === "shallow" ? TreeMapNodeCategory.SHALLOW : TreeMapNodeCategory.RETAINED}
                         width={window.innerWidth * 0.75}
                         height={window.innerHeight * 0.97}
+                        bindings={bindings}
                     ></TreeMap>
                 </div>
                 <div className="treemap-side-bar">

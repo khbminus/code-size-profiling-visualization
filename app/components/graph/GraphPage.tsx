@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useMemo, useState} from "react";
 import {processNames} from "~/components/tree-view/processData";
 import Graph from "~/components/graph/Graph";
 import TreeView from "~/components/tree-view/TreeView";
@@ -15,8 +15,8 @@ interface GraphPageProps {
 export default function GraphPage({nodes, edges, retainedSizes}: GraphPageProps) {
     const [checkedNames, setCheckedNames] = useState<string[]>([]);
     const [allowedNames, setAllowedNames] = useState<string[]>([]);
-    const [treeViewNodes] = useState(() =>
-        processNames(nodes.map(([name, _]) => name)));
+    const treeViewNodes = useMemo(() =>
+        processNames(nodes.map(([name, entry]) => [entry.displayName || name, name])), [nodes]);
 
     const [maxDepth, setMaxDepth] = useState(3);
 

@@ -22,24 +22,25 @@ export type TreeMapNode = {
 }
 
 export function buildHierarchy(
-    allNames: Array<string>,
+    allNames: [string, string][],
     rootName: string,
     depth: number,
     topCategory: TreeMapNodeCategory,
+    renderNames: Set<string>,
     primaryValues: Map<string, IrEntry>,
     secondaryValues: Map<string, IrEntry> | null = null): TreeMapNode {
     const [leafsNames, nonLeafsNames] = allNames
-        .reduce(([leafs, nonLeafs], elem) => {
-            const split = splitByDot(elem);
+        .reduce(([leafs, nonLeafs], [name, id]) => {
+            const split = splitByDot(name);
             if (split.length - 1 == depth) {
-                leafs.push([split, elem]);
+                leafs.push([split, [name, id]]);
             } else {
-                nonLeafs.push([split, elem]);
+                nonLeafs.push([split, [name, id]]);
             }
             return [leafs, nonLeafs];
-        }, [[], []] as [[string[], string][], [string[], string][]]);
+        }, [[], []] as [[string[], [string, string]][], [string[], [string, string]][]]);
 
-    const nextChildren = new Map<string, string[]>();
+    const nextChildren = new Map<string, [string, string][]>();
     nonLeafsNames.forEach(([split, name]) => {
         const firstElementArray = nextChildren.has(split[depth]) ? nextChildren.get(split[depth]) : [];
         if (firstElementArray === undefined) {
@@ -52,10 +53,11 @@ export function buildHierarchy(
     const additionalValue = new Map<string, { value: number, shallowValue: number }>();
 
     let children: TreeMapNode[] = leafsNames
-        .map(([split, name]): TreeMapNode => {
-            const value = primaryValues.get(name) || {size: 0, type: "unknown"};
+        .filter(([_, [__, id]]) => renderNames.has(id))
+        .map(([split, [_, id]]): TreeMapNode => {
+            const value = primaryValues.get(id) || {size: 0, type: "unknown"};
             if (secondaryValues !== null) {
-                const secondaryValue = secondaryValues.get(name) || {size: 0, type: "unknown"};
+                const secondaryValue = secondaryValues.get(id) || {size: 0, type: "unknown"};
                 return {
                     name: split[split.length - 1],
                     value: value.size,
@@ -90,6 +92,7 @@ export function buildHierarchy(
             name,
             depth + 1,
             topCategory,
+            renderNames,
             primaryValues,
             secondaryValues
         );

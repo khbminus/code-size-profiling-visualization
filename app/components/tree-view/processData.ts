@@ -15,14 +15,14 @@ export type Node = {
     title?: string
 }
 
-export function processNames(names: string[]): Node[] {
-    const splitNames: [string, string][][] = names.map(splitByDotWithDelimiter);
+export function processNames(names: [string, string][]): Node[] {
+    const splitNames: [[string, string][], string][] = names.map(([x, y]) => [splitByDotWithDelimiter(x), y]);
     let root: LookupNode = {label: "", value: "", children: new Map(), isTerminal: false}
-    splitNames.forEach(split => {
+    splitNames.forEach(([split, label]) => {
             let currentVertex = root;
             let depth = 0;
             let value = "";
-            while (depth < split.length) {
+            while (depth + 1 < split.length) {
                 if (depth > 0) {
                     value = value.concat(split[depth - 1][1]);
                 }
@@ -35,7 +35,8 @@ export function processNames(names: string[]): Node[] {
                 depth++;
                 currentVertex = nextNode;
             }
-            currentVertex.isTerminal = true;
+            const terminalNode = {label: split[depth][0], value: label, children: new Map(), isTerminal: true};
+            currentVertex.children.set(label, terminalNode);
         }
     );
     const converted = convertNode(root);

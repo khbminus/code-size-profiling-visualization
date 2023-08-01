@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import type {IrEntry, IrMap} from "~/models/irMaps.server";
 
 export const linkClassName = "font-medium text-blue-600 underline hover:no-underline";
 const complement = {")": "(", "]": "[", ">": "<", "}": "{"};
@@ -83,4 +84,14 @@ export function useDebounce<T>(value: T, delay: number): T {
     );
 
     return debouncedValue;
+}
+
+export function buildIrMap(obj: IrMap): Map<string, IrEntry> {
+    return new Map(
+        Object
+            .entries(obj)
+            .map(([name, obj]) =>
+                [obj.displayName || name, obj]
+            )
+    )
 }

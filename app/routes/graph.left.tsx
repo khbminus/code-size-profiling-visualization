@@ -7,6 +7,7 @@ import "react-checkbox-tree/lib/react-checkbox-tree.css"
 import styles from "style.css";
 import invariant from "tiny-invariant";
 import {useMemo} from "react";
+import {buildIrMap} from "~/utils";
 
 export const loader = async () => {
     const {nodes, edges, retainedNodes} = await getRegularGraphLeft();
@@ -23,7 +24,7 @@ export const links: LinksFunction = () => [{
 export default function LeftGraph() {
     const {nodes, edges, retainedNodes} = useLoaderData<typeof loader>();
     invariant(retainedNodes !== null, "retained sizes is null");
-    const retainedMap = useMemo(() => new Map(Object.entries(retainedNodes)), [retainedNodes]);
+    const retainedMap = useMemo(() => buildIrMap(retainedNodes), [retainedNodes]);
     return <GraphPage
         nodes={nodes}
         edges={edges}

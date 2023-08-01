@@ -13,7 +13,8 @@ export enum TreeMapViewMode {
 }
 
 export interface TreeMapProps {
-    renderableNames: string[] // TODO: maybe change it
+    renderableNames: Set<string>,
+    bindings: [string, string][]
     minimumRadius: number,
     primaryIrMap: Map<string, IrEntry>,
     secondaryIrMap: Map<string, IrEntry> | null,
@@ -30,7 +31,8 @@ export default function TreeMap(props: TreeMapProps) {
         secondaryIrMap,
         topCategory,
         width,
-        height
+        height,
+        bindings
     } = props;
 
     const svgRef = useRef(null);
@@ -50,8 +52,8 @@ export default function TreeMap(props: TreeMapProps) {
         .treemap<TreeMapNode>()
         .tile(tilingFunction), [tilingFunction]);
     const tree = useMemo(() =>
-        buildHierarchy(renderableNames, "Kotlin IR", 0, topCategory, primaryIrMap, secondaryIrMap),
-        [renderableNames, topCategory, primaryIrMap, secondaryIrMap]);
+        buildHierarchy(bindings, "Kotlin IR", 0, topCategory, renderableNames, primaryIrMap, secondaryIrMap),
+        [bindings, renderableNames, topCategory, primaryIrMap, secondaryIrMap]);
 
     const hierarchy = useMemo(() => removeAllSmall(
         d3
