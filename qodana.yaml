@@ -13,10 +13,10 @@ profile:
 #  - name: <SomeEnabledInspectionId>
 
 #Disable inspections
-#exclude:
-#  - name: <SomeDisabledInspectionId>
-#    paths:
-#      - <path/where/not/run/inspection>
+exclude:
+  - name: all
+    paths:
+      - remix.env.d.ts
 
 #The following options are only applied in CI/CD environment
 #These options are ignored during local run
