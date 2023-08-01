@@ -23,7 +23,7 @@ exclude:
 
 #Execute shell command before Qodana execution
 #bootstrap: sh ./prepare-qodana.sh
-
+bootstrap: yarn install
 #Install IDE plugins before Qodana execution
 #plugins:
 #  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
