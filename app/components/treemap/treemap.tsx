@@ -101,7 +101,7 @@ export default function TreeMap(props: TreeMapProps) {
             return node;
         }
         renderer.renderTreeMap(restorePath(0, builtTreeMap));
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [builtTreeMap,height, width, hierarchy, hierarchy.children]);
     return <svg ref={svgRef}/>
 }

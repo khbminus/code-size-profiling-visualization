@@ -1,4 +1,4 @@
-import {getRetainedIrMapLeft, getShallowIrMapLeft, IrEntry, IrMap} from "~/models/irMaps.server";
+import {getRetainedIrMapLeft, getShallowIrMapLeft} from "~/models/irMaps.server";
 import type {LinksFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import "react-checkbox-tree/lib/react-checkbox-tree.css"

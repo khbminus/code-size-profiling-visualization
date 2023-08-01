@@ -1,10 +1,6 @@
 import {
-    getRetainedIrMapLeft,
     getRetainedIrMapRight,
-    getShallowIrMapLeft,
-    getShallowIrMapRight,
-    IrEntry,
-    IrMap
+    getShallowIrMapRight
 } from "~/models/irMaps.server";
 import type {LinksFunction} from "@remix-run/node";
 import {json} from "@remix-run/node";

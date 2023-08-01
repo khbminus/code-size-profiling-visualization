@@ -4,7 +4,6 @@ import {useEffect} from "react";
 import {MultiDirectedGraph} from "graphology";
 import type {SerializedEdge, SerializedNode} from "graphology-types";
 import type {SigmaEdgeAttributes, SigmaNodeAttributes} from "~/components/graph/dataProcessing";
-import invariant from "tiny-invariant";
 
 interface LoadGraphProps {
     nodes: SerializedNode<SigmaNodeAttributes>[],

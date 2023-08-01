@@ -32,7 +32,7 @@ export default function SourceView({language, segments, palette, metaHolder, fil
             return a.startCursor.line - b.startCursor.line;
         }));
         return res.map(arr => new Queue(...arr));
-    }, [segments]);
+    }, [files.length, segments]);
 
     const content = fileContent[selectedName];
     const queue = segmentsQueues[selectedName];
