@@ -76,7 +76,9 @@ export default function TreeMap(props: TreeMapProps) {
             .style("font", "10px sans-serif")
             .attr("viewBox", [0.5, -30.5, width, height + 30])
             .attr("transform", "translate(0, 30)");
-        invariant(hierarchy.children !== undefined, "No children was found");
+        if (hierarchy.children === undefined) {
+            return
+        }
         hierarchy.children.sort((a, b) => {
             invariant(b.value !== undefined, `${b.data.name}.value is undefined`);
             invariant(a.value !== undefined, `${a.data.name}.value is undefined`);
@@ -98,6 +100,6 @@ export default function TreeMap(props: TreeMapProps) {
         }
         renderer.renderTreeMap(restorePath(0, builtTreeMap));
 
-    }, [builtTreeMap,height, width]);
+    }, [builtTreeMap,height, width, hierarchy, hierarchy.children]);
     return <svg ref={svgRef}/>
 }

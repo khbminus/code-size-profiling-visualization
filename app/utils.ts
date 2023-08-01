@@ -1,9 +1,19 @@
 import {useEffect, useState} from "react";
 
 export const linkClassName = "font-medium text-blue-600 underline hover:no-underline";
+const complement = {")": "(", "]": "[", ">": "<", "}": "{"};
 
+function propagate(c: string, stack: string[]) {
+    if (c === "(" || c === "{" || c == "<" || c == "[") {
+        stack.push(c);
+    } else if (c === ")" || c === "}" || c === ">" || c === "]") {
+        while (stack.length > 1 && stack[stack.length - 1] != complement[c]) {
+            stack.pop();
+        }
+        stack.pop();
+    }
+}
 export function splitByDot(x: string): string[] {
-    const complement = {")": "(", "]": "[", ">": "<", "}": "{"};
     const chars = [...x]
     const stack: string[] = []
     const res: string[] = []
@@ -22,18 +32,35 @@ export function splitByDot(x: string): string[] {
             }
             return;
         }
-        if (c === "(" || c === "{" || c == "<" || c == "[") {
-            stack.push(c);
-        } else if (c === ")" || c === "}" || c === ">" || c === "]") {
-            while (stack.length > 1 && stack[stack.length - 1] != complement[c]) {
-                stack.pop();
-            }
-            stack.pop();
-        }
+        propagate(c, stack);
         current = current.concat(c);
     });
     if (current.length > 0) {
         res.push(current);
+    }
+    return res;
+}
+
+export function splitByDotWithDelimiter(x: string): [string, string][] {
+    const chars = [...x]
+    const stack: string[] = []
+    const res: [string, string][] = []
+    let current = ""
+    chars.forEach(c => {
+        if (c === "." || c == "/") {
+            if (stack.length === 0) {
+                res.push([current, c])
+                current = "";
+            } else {
+                current = current.concat(c);
+            }
+            return;
+        }
+        propagate(c, stack);
+        current = current.concat(c);
+    });
+    if (current.length > 0) {
+        res.push([current, ""]);
     }
     return res;
 }

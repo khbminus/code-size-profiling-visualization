@@ -1,4 +1,4 @@
-import type {IrEntry, IrMap} from "~/models/irMaps.server";
+import type {IrMap} from "~/models/irMaps.server";
 import {useEffect, useMemo, useState} from "react";
 import {processNames} from "~/components/tree-view/processData";
 import {ClientOnly} from "remix-utils";
@@ -46,7 +46,7 @@ export default function TreeMapPage({shallowMap, retainedMap}: TreeMapPageProps)
         return checkedNamesByType.filter(x => set1.has(x));
     }, [checkedNames, checkedNamesByType]);
 
-    const treeViewNodes = processNames([...irMapSecondary.keys()]);
+    const treeViewNodes = useMemo(() => processNames([...irMapSecondary.keys()]), [irMapSecondary]);
 
     const [minSize, maxSize] = useMemo(
         () => [...irMapPrimary.values()].reduce(([mn, mx], {size}) =>

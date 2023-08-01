@@ -1,4 +1,4 @@
-import {splitByDot} from "~/utils";
+import {splitByDotWithDelimiter} from "~/utils";
 import invariant from "tiny-invariant";
 import type {ReactNode} from "react";
 
@@ -16,7 +16,7 @@ export type Node = {
 }
 
 export function processNames(names: string[]): Node[] {
-    const splitNames: string[][] = names.map(splitByDot);
+    const splitNames: [string, string][][] = names.map(splitByDotWithDelimiter);
     let root: LookupNode = {label: "", value: "", children: new Map(), isTerminal: false}
     splitNames.forEach(split => {
             let currentVertex = root;
@@ -24,13 +24,13 @@ export function processNames(names: string[]): Node[] {
             let value = "";
             while (depth < split.length) {
                 if (depth > 0) {
-                    value = value.concat(".");
+                    value = value.concat(split[depth - 1][1]);
                 }
-                value = value.concat(split[depth]);
-                let nextNode = currentVertex.children.get(split[depth]);
+                value = value.concat(split[depth][0]);
+                let nextNode = currentVertex.children.get(split[depth][0]);
                 if (nextNode === undefined) {
-                    nextNode = {label: split[depth], value: value, children: new Map(), isTerminal: false}
-                    currentVertex.children.set(split[depth], nextNode);
+                    nextNode = {label: split[depth][0], value: value, children: new Map(), isTerminal: false}
+                    currentVertex.children.set(split[depth][0], nextNode);
                 }
                 depth++;
                 currentVertex = nextNode;
