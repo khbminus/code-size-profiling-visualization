@@ -7,7 +7,9 @@ export default function ForceLayout() {
     const {start, kill} = useWorkerLayoutForceAtlas2({
         settings: {
             barnesHutOptimize: sigma.getGraph().order > 10000,
-            slowDown: 20
+            slowDown: 8,
+            adjustSizes: true,
+            gravity: 0.3
         }
     });
     useEffect(() => {
