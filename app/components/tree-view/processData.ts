@@ -29,7 +29,7 @@ export function processNames(names: [string, string][]): Node[] {
                 value = value.concat(split[depth][0]);
                 let nextNode = currentVertex.children.get(split[depth][0]);
                 if (nextNode === undefined) {
-                    nextNode = {label: split[depth][0], value: value, children: new Map(), isTerminal: false}
+                    nextNode = {label: split[depth][0], value: value.concat(" intermediate"), children: new Map(), isTerminal: false}
                     currentVertex.children.set(split[depth][0], nextNode);
                 }
                 depth++;
