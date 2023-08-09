@@ -1,5 +1,5 @@
 import {Highlight, themes} from "prism-react-renderer";
-import type {SourceMapSegment} from "~/models/sourceMap.server";
+import type {FunctionPosition, SourceMapSegment} from "~/models/sourceMap.server";
 import {Queue} from "queue-typescript"
 import type {SpanMetaHolder} from "~/components/source-map/child-function";
 import buildChildFunction from "~/components/source-map/child-function";
@@ -13,9 +13,18 @@ export interface SourceViewProps {
     metaHolder: Map<string, SpanMetaHolder>,
     files: string[],
     fileContent: (string | null)[],
+    scrollInitialTo: FunctionPosition | null
 }
 
-export default function SourceView({language, segments, palette, metaHolder, files, fileContent}: SourceViewProps) {
+export default function SourceView({
+                                       language,
+                                       segments,
+                                       palette,
+                                       metaHolder,
+                                       files,
+                                       fileContent,
+                                       scrollInitialTo
+                                   }: SourceViewProps) {
     const [selectedName, setSelectedName] = useState(0);
     const segmentsQueues = useMemo(() => {
         const res: SourceMapSegment[][] = [];
@@ -46,7 +55,7 @@ export default function SourceView({language, segments, palette, metaHolder, fil
                     language={language}
                     theme={themes.github}
                 >
-                    {buildChildFunction(queue, palette, metaHolder)}
+                    {buildChildFunction(queue, palette, metaHolder, scrollInitialTo)}
                 </Highlight>
             </div>
         }

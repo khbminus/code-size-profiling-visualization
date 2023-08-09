@@ -33,6 +33,12 @@ export type SourceFiles = {
     fileContents: (string | null)[],
 }
 
+export type FunctionPosition = { lineNumber: number, columnNumber: number }
+
+export type FunctionPositions = {
+    [key: string]: FunctionPosition
+}
+
 
 export async function getFiles(...sourceMapPath: string[]): Promise<SourceFiles> {
     return loadSourceMap(...sourceMapPath)
@@ -73,6 +79,12 @@ export async function loadSegments(): Promise<SourceMapMatch[]> {
             });
             return segments;
         })
+}
+
+export async function loadFunctionPositions(): Promise<FunctionPositions> {
+    return fs
+        .readFile(constructSourcePath("functions-wat.json"), "utf-8")
+        .then(x => JSON.parse(x));
 }
 
 export const getKotlinFiles = () => getFiles("kotlin.map");

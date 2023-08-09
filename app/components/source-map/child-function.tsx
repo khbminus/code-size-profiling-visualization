@@ -1,6 +1,6 @@
 import type {RenderProps} from "prism-react-renderer";
 import LineNumber from "~/components/source-map/LineNumber";
-import type {SourceMapSegment} from "~/models/sourceMap.server";
+import type {FunctionPosition, SourceMapSegment} from "~/models/sourceMap.server";
 import {Queue} from "queue-typescript";
 import type {LineWrapper} from "~/components/source-map/process-tokens";
 import {processLine} from "~/components/source-map/process-tokens";
@@ -15,7 +15,8 @@ export type SpanMetaHolder = {
 export default function buildChildFunction(
     queuedSegments: Queue<SourceMapSegment>,
     colors: string[],
-    metaHolder: Map<string, SpanMetaHolder>
+    metaHolder: Map<string, SpanMetaHolder>,
+    scrollToCursor: FunctionPosition | null
 ) {
     return function ChildFunction({style, getTokenProps, tokens, getLineProps}: RenderProps) {
         const lines: LineWrapper[] = useMemo(() => {
@@ -26,11 +27,12 @@ export default function buildChildFunction(
                     tokens: line.map(token => ({
                         text: token.content,
                         attrs: getTokenProps({token}),
-                        segmentInfo: null
+                        segmentInfo: null,
+                        scrollToInitial: false
                     }))
                 }))
                 .map((line, index) =>
-                    processLine(clonedQueue, colors, index, line)
+                    processLine(clonedQueue, colors, index, line, scrollToCursor)
                 )
         }, [tokens, getLineProps, getTokenProps]);
         const mapRef = useRef(metaHolder);
@@ -45,6 +47,7 @@ export default function buildChildFunction(
                             metaHolder={mapRef.current}
                             attrs={token.attrs}
                             key={columnNumber}
+                            isScroll={token.scrollToInitial}
                         ></TokenComponent>
                     )}
                 </div>

@@ -1,4 +1,5 @@
-import {getKotlinFiles, getWatFiles, loadSegments} from "~/models/sourceMap.server";
+import {getKotlinFiles, getWatFiles, loadFunctionPositions, loadSegments} from "~/models/sourceMap.server";
+import type { LoaderArgs} from "@remix-run/node";
 import {json} from "@remix-run/node";
 import {useLoaderData} from "@remix-run/react";
 import {Prism} from "prism-react-renderer";
@@ -12,15 +13,18 @@ require("prismjs/components/prism-kotlin");
 require("prismjs/components/prism-wasm");
 
 
-export const loader = async () => {
+export const loader = async ({params}: LoaderArgs) => {
     const segments = await loadSegments();
     const kotlinFiles = await getKotlinFiles();
     const watFiles = await getWatFiles();
+    const functionsPositions = await loadFunctionPositions();
     return json({
         kotlinFiles: kotlinFiles,
         watFiles: watFiles,
         kotlinSegments: segments.map(seg => seg.kotlinSegment),
-        watSegments: segments.map(seg => seg.watSegment)
+        watSegments: segments.map(seg => seg.watSegment),
+        functionPositions: functionsPositions,
+        scrollKtTo: params.name
     });
 }
 export default function SourceMapVisualization() {
@@ -28,9 +32,10 @@ export default function SourceMapVisualization() {
         kotlinFiles,
         watFiles,
         kotlinSegments,
-        watSegments
+        watSegments,
+        functionPositions,
+        scrollKtTo
     } = useLoaderData<typeof loader>();
-
     const palette = useMemo(() => iwanthue(
         kotlinSegments.length,
         {colorSpace: "pastel", seed: "LetsTryAnotherOne"}
@@ -47,6 +52,7 @@ export default function SourceMapVisualization() {
                 segments={kotlinSegments}
                 palette={palette}
                 metaHolder={metaHolder}
+                scrollInitialTo={null}
             />
         </div>
         <div className="wasm-source flex-1 whitespace-pre-line w-1/2 absolute right-0">
@@ -57,6 +63,7 @@ export default function SourceMapVisualization() {
                 palette={palette}
                 metaHolder={metaHolder}
                 files={watFiles.files}
+                scrollInitialTo={(scrollKtTo !== undefined && scrollKtTo in functionPositions) ? functionPositions[scrollKtTo] : null}
             />
         </div>
     </div>

@@ -1,16 +1,24 @@
 import type {TokenOutputProps} from "prism-react-renderer";
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import type {SpanMetaHolder} from "~/components/source-map/child-function";
 import type {SegmentInfo} from "~/components/source-map/process-tokens";
 
 interface TokenComponentProps {
     attrs: TokenOutputProps,
     segmentInfo: SegmentInfo | null,
-    metaHolder: Map<string, SpanMetaHolder>
+    metaHolder: Map<string, SpanMetaHolder>,
+    isScroll: boolean
 }
 
-export default function TokenComponent({attrs, metaHolder, segmentInfo}: TokenComponentProps) {
+export default function TokenComponent({attrs, metaHolder, segmentInfo, isScroll}: TokenComponentProps) {
     const ref = useRef<HTMLSpanElement | null>(null);
+
+    useEffect(() => {
+        if (isScroll) {
+            // console.log(attrs);
+            ref.current?.scrollIntoView({behavior: "smooth"});
+        }
+    });
     const onHoverStart = () => {
         const span = ref.current
         if (span !== null) {
@@ -27,7 +35,7 @@ export default function TokenComponent({attrs, metaHolder, segmentInfo}: TokenCo
         }
     }
     if (segmentInfo === null) {
-        return <span {...attrs}></span>
+        return <span ref={ref} {...attrs}></span>
     }
 
     const key = getKey(segmentInfo);
